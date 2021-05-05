@@ -68,6 +68,58 @@ class HomeScreen extends StatelessWidget {
           child: Container(
             decoration:
                 BoxDecoration(shape: BoxShape.rectangle, color: Colors.white),
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+              ),
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    child: Card(
+                      elevation: 5,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Icon(
+                                Icons.book,
+                                color: Colors.red,
+                                size: 28.0,
+                              ),
+                              Text(
+                                '10',
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.indigo),
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text(
+                                'Kişisel',
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87),
+                              ),
+                              Text('')
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ],
