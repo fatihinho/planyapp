@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:planyapp/src/screens/todo_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -7,14 +8,33 @@ class HomeScreen extends StatelessWidget {
     var screenHeight = size.height;
     var screenWidth = size.width;
 
+    Route _navigateToTodos(String title) {
+      return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            TodoScreen(title),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          var begin = Offset(0.0, -1.0);
+          var end = Offset.zero;
+          var curve = Curves.ease;
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      );
+    }
+
     return Scaffold(
-        body: Flex(
-      direction: Axis.vertical,
-      children: [
-        Flexible(
-          flex: 4,
-          child: Container(
-            color: Colors.white,
+        body: Container(
+      color: Colors.white,
+      child: Flex(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        direction: Axis.vertical,
+        children: [
+          Flexible(
+            flex: 4,
             child: Stack(children: [
               Container(
                 decoration: BoxDecoration(
@@ -62,67 +82,85 @@ class HomeScreen extends StatelessWidget {
                   )),
             ]),
           ),
-        ),
-        Flexible(
-          flex: 5,
-          child: Container(
-            decoration:
-                BoxDecoration(shape: BoxShape.rectangle, color: Colors.white),
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-              ),
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                    child: Card(
-                      elevation: 5,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Icon(
-                                Icons.book,
-                                color: Colors.red,
-                                size: 28.0,
-                              ),
-                              Text(
-                                '10',
-                                style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.indigo),
-                              )
-                            ],
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text('Planlar',
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
+          ),
+          Flexible(
+            flex: 5,
+            child: Container(
+              decoration:
+                  BoxDecoration(shape: BoxShape.rectangle, color: Colors.white),
+              child: GridView.builder(
+                padding: const EdgeInsets.all(0.0),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 1.5,
+                  crossAxisCount: 2,
+                ),
+                itemCount: 10,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(_navigateToTodos(index.toString()));
+                      },
+                      onLongPress: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('$index. plan'),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Text(
-                                'Kişisel',
-                                style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87),
-                              ),
-                              Text('')
-                            ],
-                          )
-                        ],
+                        );
+                      },
+                      child: Card(
+                        elevation: 5,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Icon(
+                                  Icons.book,
+                                  color: Colors.red,
+                                  size: 28.0,
+                                ),
+                                Text(
+                                  '10',
+                                  style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.indigo),
+                                )
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(
+                                  'Kişisel',
+                                  style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87),
+                                ),
+                                Text('')
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     ));
   }
 }
