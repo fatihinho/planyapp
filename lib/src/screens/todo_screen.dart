@@ -1,8 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:planyapp/src/screens/month_todo_screen.dart';
+import 'package:planyapp/src/screens/today_todo_screen.dart';
+import 'package:planyapp/src/screens/week_todo_screen.dart';
 
-class TodoScreen extends StatelessWidget {
+class TodoScreen extends StatefulWidget {
   final String _title;
   TodoScreen(this._title);
+
+  @override
+  _TodoScreenState createState() => _TodoScreenState();
+}
+
+class _TodoScreenState extends State<TodoScreen> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  final List<Widget> _widgetOptions = [
+    TodayTodoScreen(),
+    WeekTodoScreen(),
+    MonthTodoScreen()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +46,7 @@ class TodoScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                'Kişisel Planlar $_title',
+                'Kişisel Planlar ${widget._title}',
                 style: TextStyle(
                     fontSize: 28.0,
                     fontWeight: FontWeight.bold,
@@ -35,12 +57,9 @@ class TodoScreen extends StatelessWidget {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
+              color: Colors.white,
+              child: _widgetOptions[_selectedIndex],
               height: screenHeight * 0.68,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0))),
             ),
           )
         ],
@@ -50,14 +69,19 @@ class TodoScreen extends StatelessWidget {
         child: Icon(Icons.add),
         onPressed: () {},
       ),
-      bottomNavigationBar:
-          BottomNavigationBar(backgroundColor: Colors.white, items: [
-        BottomNavigationBarItem(label: 'Bugün', icon: Icon(Icons.today)),
-        BottomNavigationBarItem(
-            label: 'Hafta', icon: Icon(Icons.calendar_view_day_outlined)),
-        BottomNavigationBarItem(
-            label: 'Ay', icon: Icon(Icons.calendar_today_rounded)),
-      ]),
+      bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.indigo,
+        backgroundColor: Colors.white,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: [
+          BottomNavigationBarItem(label: 'Bugün', icon: Icon(Icons.today)),
+          BottomNavigationBarItem(
+              label: 'Hafta', icon: Icon(Icons.calendar_view_day_outlined)),
+          BottomNavigationBarItem(
+              label: 'Ay', icon: Icon(Icons.calendar_today_rounded)),
+        ],
+      ),
     );
   }
 }

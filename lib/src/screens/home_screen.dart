@@ -143,9 +143,9 @@ class HomeScreen extends StatelessWidget {
                                 Text(
                                   'Kişisel',
                                   style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87),
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 Text('')
                               ],
