@@ -1,7 +1,11 @@
+import 'package:flutter/material.dart';
+
 class Task {
   String title;
-  String date;
+  String note;
+  DateTime date;
+  TimeOfDay time;
   bool isCompleted;
 
-  Task(this.title, this.date, this.isCompleted);
+  Task(this.title, this.note, this.date, this.time, this.isCompleted);
 }
