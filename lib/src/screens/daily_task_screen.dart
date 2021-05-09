@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:planyapp/src/models/task_model.dart';
+import 'package:planyapp/src/providers/task_provider.dart';
+import 'package:planyapp/src/utils/datetime_format_util.dart';
+import 'package:planyapp/src/widgets/textstyles_widget.dart';
+import 'package:provider/provider.dart';
 
 class DailyTaskScreen extends StatefulWidget {
   @override
@@ -7,24 +11,6 @@ class DailyTaskScreen extends StatefulWidget {
 }
 
 class _DailyTaskScreenState extends State<DailyTaskScreen> {
-  final Icon _uncompletedTaskLeading =
-      Icon(Icons.check_box_outline_blank, size: 36.0);
-  final Icon _completedTaskLeading = Icon(
-    Icons.check_box_rounded,
-    color: Colors.cyan,
-    size: 36.0,
-  );
-  final TextStyle _uncompletedTaskTextStyle = TextStyle(
-      fontSize: 18.0,
-      fontWeight: FontWeight.bold,
-      color: Colors.blueGrey[800],
-      decoration: TextDecoration.none);
-  final TextStyle _completedTaskTextStyle = TextStyle(
-      fontSize: 18.0,
-      fontWeight: FontWeight.normal,
-      color: Colors.grey,
-      decoration: TextDecoration.lineThrough);
-
   Widget _stackBehindDismiss() {
     return Container(
       alignment: Alignment.centerRight,
@@ -37,26 +23,21 @@ class _DailyTaskScreenState extends State<DailyTaskScreen> {
     );
   }
 
-  List<Task> _tasks = [
-    Task('Ders çalış', '10.00', false),
-    Task('Yürüyüşe çık', '12.00', false),
-    Task('Yemek ye', '13.00', false),
-    Task('Kitap oku', '15.00', false)
-  ];
-
   @override
   Widget build(BuildContext context) {
+    TaskProvider taskProvider = Provider.of<TaskProvider>(context);
+    List<Task> tasks = Provider.of<TaskProvider>(context).tasks;
     return Container(
       child: ListView.builder(
-          itemCount: _tasks.length,
+          itemCount: tasks.length,
           itemBuilder: (context, index) {
             return Dismissible(
-              key: ObjectKey(_tasks[index]),
+              key: ObjectKey(tasks[index]),
               background: _stackBehindDismiss(),
               direction: DismissDirection.endToStart,
               onDismissed: (direction) {
                 setState(() {
-                  _tasks.removeAt(index);
+                  taskProvider.deleteTask(index);
                 });
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     backgroundColor: Colors.redAccent,
@@ -66,22 +47,37 @@ class _DailyTaskScreenState extends State<DailyTaskScreen> {
                 leading: GestureDetector(
                     onTap: () {
                       setState(() {
-                        _tasks[index].isCompleted = !_tasks[index].isCompleted;
+                        tasks[index].isCompleted = !tasks[index].isCompleted;
                       });
                     },
-                    child: _tasks[index].isCompleted
-                        ? _completedTaskLeading
-                        : _uncompletedTaskLeading),
+                    child: tasks[index].isCompleted
+                        ? TasksTextStyles.completedTaskLeading
+                        : TasksTextStyles.uncompletedTaskLeading),
                 title: Text(
-                  '${_tasks[index].title}',
-                  style: _tasks[index].isCompleted
-                      ? _completedTaskTextStyle
-                      : _uncompletedTaskTextStyle,
+                  '${tasks[index].title}',
+                  style: tasks[index].isCompleted
+                      ? TasksTextStyles.completedTitleTextStyle
+                      : TasksTextStyles.uncompletedTitleTextStyle,
                 ),
-                subtitle: Text('${_tasks[index].date}',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueGrey[400])),
+                subtitle: Text('${tasks[index].note}',
+                    style: tasks[index].isCompleted
+                        ? TasksTextStyles.completedNoteStyle
+                        : TasksTextStyles.uncompletedNoteStyle),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                        '${DateTimeFormat.formatDate(tasks[index].date.day)}/${DateTimeFormat.formatDate(tasks[index].date.month)}/${tasks[index].date.year}',
+                        style: tasks[index].isCompleted
+                            ? TasksTextStyles.completedDateTimeStyle
+                            : TasksTextStyles.uncompletedDateTimeStyle),
+                    Text(
+                        '${DateTimeFormat.formatTime(tasks[index].time.hour)}:${DateTimeFormat.formatTime(tasks[index].time.minute)}',
+                        style: tasks[index].isCompleted
+                            ? TasksTextStyles.completedDateTimeStyle
+                            : TasksTextStyles.uncompletedDateTimeStyle),
+                  ],
+                ),
               ),
             );
           }),
