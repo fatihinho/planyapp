@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:planyapp/src/screens/todo_screen.dart';
+import 'package:planyapp/src/screens/task_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -8,10 +8,10 @@ class HomeScreen extends StatelessWidget {
     var screenHeight = size.height;
     var screenWidth = size.width;
 
-    Route _navigateToTodos(String title) {
+    Route _navigateToTasks(String title) {
       return PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            TodoScreen(title),
+            TaskScreen(title),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           var begin = Offset(0.0, -1.0);
           var end = Offset.zero;
@@ -105,7 +105,7 @@ class HomeScreen extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context)
-                            .push(_navigateToTodos(index.toString()));
+                            .push(_navigateToTasks(index.toString()));
                       },
                       onLongPress: () {
                         ScaffoldMessenger.of(context).showSnackBar(

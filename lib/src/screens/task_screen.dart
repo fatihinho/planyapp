@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:planyapp/src/screens/month_todo_screen.dart';
-import 'package:planyapp/src/screens/today_todo_screen.dart';
-import 'package:planyapp/src/screens/week_todo_screen.dart';
+import 'package:planyapp/src/screens/monthly_task_screen.dart';
+import 'package:planyapp/src/screens/daily_task_screen.dart';
+import 'package:planyapp/src/screens/task_adding_screen.dart';
+import 'package:planyapp/src/screens/weekly_task_screen.dart';
 
-class TodoScreen extends StatefulWidget {
+class TaskScreen extends StatefulWidget {
   final String _title;
-  TodoScreen(this._title);
+  TaskScreen(this._title);
 
   @override
-  _TodoScreenState createState() => _TodoScreenState();
+  _TaskScreenState createState() => _TaskScreenState();
 }
 
-class _TodoScreenState extends State<TodoScreen> {
+class _TaskScreenState extends State<TaskScreen> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -20,10 +21,28 @@ class _TodoScreenState extends State<TodoScreen> {
     });
   }
 
+  Route _navigateToTaskAdding() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          TaskAddingScreen(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   final List<Widget> _widgetOptions = [
-    TodayTodoScreen(),
-    WeekTodoScreen(),
-    MonthTodoScreen()
+    DailyTaskScreen(),
+    WeeklyTaskScreen(),
+    MonthlyTaskScreen()
   ];
 
   @override
@@ -67,7 +86,9 @@ class _TodoScreenState extends State<TodoScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.cyan,
         child: Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(_navigateToTaskAdding());
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.indigo,
@@ -75,11 +96,11 @@ class _TodoScreenState extends State<TodoScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: [
-          BottomNavigationBarItem(label: 'Bugün', icon: Icon(Icons.today)),
+          BottomNavigationBarItem(label: 'Günlük', icon: Icon(Icons.today)),
           BottomNavigationBarItem(
-              label: 'Hafta', icon: Icon(Icons.calendar_view_day_outlined)),
+              label: 'Haftalık', icon: Icon(Icons.calendar_view_day_outlined)),
           BottomNavigationBarItem(
-              label: 'Ay', icon: Icon(Icons.calendar_today_rounded)),
+              label: 'Aylık', icon: Icon(Icons.calendar_today_rounded)),
         ],
       ),
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MonthTodoScreen extends StatelessWidget {
+class MonthlyTaskScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(

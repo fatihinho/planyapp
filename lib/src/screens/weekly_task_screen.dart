@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class WeekTodoScreen extends StatefulWidget {
+class WeeklyTaskScreen extends StatefulWidget {
   @override
-  _WeekTodoScreenState createState() => _WeekTodoScreenState();
+  _WeeklyTaskScreenState createState() => _WeeklyTaskScreenState();
 }
 
-class _WeekTodoScreenState extends State<WeekTodoScreen> {
+class _WeeklyTaskScreenState extends State<WeeklyTaskScreen> {
   List<bool> _isExpanded = [false, false, false, false, false, false, false];
   List<String> _titles = [
     'Pazartesi',

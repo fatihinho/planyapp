@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:planyapp/src/models/task.dart';
+import 'package:planyapp/src/models/task_model.dart';
 
-class TodayTodoScreen extends StatefulWidget {
+class DailyTaskScreen extends StatefulWidget {
   @override
-  _TodayTodoScreenState createState() => _TodayTodoScreenState();
+  _DailyTaskScreenState createState() => _DailyTaskScreenState();
 }
 
-class _TodayTodoScreenState extends State<TodayTodoScreen> {
+class _DailyTaskScreenState extends State<DailyTaskScreen> {
   final Icon _uncompletedTaskLeading =
       Icon(Icons.check_box_outline_blank, size: 36.0);
   final Icon _completedTaskLeading = Icon(
