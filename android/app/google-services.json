@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "252204328881",
+    "project_id": "planyapp-8b227",
+    "storage_bucket": "planyapp-8b227.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252204328881:android:38c223102673118ef97f90",
+        "android_client_info": {
+          "package_name": "com.fcinar.planyapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "252204328881-msrtj144ro7dhihjhevg4eg4q9cegu5l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fcinar.planyapp",
+            "certificate_hash": "4ea3db33506e38c2dc7ae4944cb7e302b5eefdf3"
+          }
+        },
+        {
+          "client_id": "252204328881-o73lllg2jkqbafeg9fep482b0ghqmbvc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfo47fPm0nAY9u9KdB4pgq2pjkjnjPmUI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "252204328881-o73lllg2jkqbafeg9fep482b0ghqmbvc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
