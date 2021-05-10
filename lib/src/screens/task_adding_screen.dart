@@ -174,7 +174,9 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                                 Text('Eksik Alan Mevcut!')));
                                   }
                                 },
-                                child: Text('Oluştur')))
+                                child: Text('Oluştur'),
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.cyan)))
                       ],
                     ),
                   ),

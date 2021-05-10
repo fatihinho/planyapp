@@ -1,30 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/task_screen.dart';
+import 'package:planyapp/src/screens/taskfolder_adding_screen.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
+  Route _navigateToTasks(String title, Color color) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          TaskScreen(title, color),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(0.0, -1.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+  Route _navigateToTaskFolderAdding() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          TaskFolderAddingScreen(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var screenHeight = size.height;
     var screenWidth = size.width;
 
-    Route _navigateToTasks(String title) {
-      return PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            TaskScreen(title),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          var begin = Offset(0.0, -1.0);
-          var end = Offset.zero;
-          var curve = Curves.ease;
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        },
-      );
-    }
+    var taskFolders = Provider.of<TaskProvider>(context).taskFolders;
 
     return Scaffold(
         body: Container(
@@ -76,7 +99,10 @@ class HomeScreen extends StatelessWidget {
                               'Yeni Klasör Oluştur',
                               style: TextStyle(color: Colors.indigo),
                             ),
-                            onPressed: () {}),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .push(_navigateToTaskFolderAdding());
+                            }),
                       ],
                     ),
                   )),
@@ -98,14 +124,15 @@ class HomeScreen extends StatelessWidget {
                   childAspectRatio: 1.5,
                   crossAxisCount: 2,
                 ),
-                itemCount: 10,
+                itemCount: taskFolders.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context)
-                            .push(_navigateToTasks(index.toString()));
+                        Navigator.of(context).push(_navigateToTasks(
+                            '${taskFolders[index].folderName}',
+                            taskFolders[index].iconColor));
                       },
                       onLongPress: () {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -124,12 +151,12 @@ class HomeScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 Icon(
-                                  Icons.book,
-                                  color: Colors.red,
+                                  Icons.folder,
+                                  color: taskFolders[index].iconColor,
                                   size: 28.0,
                                 ),
                                 Text(
-                                  '10',
+                                  '${taskFolders[index].taskNumber}',
                                   style: TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold,
@@ -141,7 +168,7 @@ class HomeScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 Text(
-                                  'Kişisel',
+                                  '${taskFolders[index].folderName}',
                                   style: TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.bold,

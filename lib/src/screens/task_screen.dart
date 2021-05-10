@@ -6,7 +6,8 @@ import 'package:planyapp/src/screens/weekly_task_screen.dart';
 
 class TaskScreen extends StatefulWidget {
   final String _title;
-  TaskScreen(this._title);
+  final Color _color;
+  TaskScreen(this._title, this._color);
 
   @override
   _TaskScreenState createState() => _TaskScreenState();
@@ -54,18 +55,18 @@ class _TaskScreenState extends State<TaskScreen> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: Colors.indigo,
+        backgroundColor: widget._color,
       ),
       body: Stack(
         children: [
           Container(
             width: screenWidth,
             height: screenHeight,
-            color: Colors.indigo,
+            color: widget._color,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                'Kişisel Planlar ${widget._title}',
+                '${widget._title}',
                 style: TextStyle(
                     fontSize: 28.0,
                     fontWeight: FontWeight.bold,
