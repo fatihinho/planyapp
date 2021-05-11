@@ -6,6 +6,8 @@ class Task {
   DateTime date;
   TimeOfDay time;
   bool isCompleted;
+  int folderId;
 
-  Task(this.title, this.note, this.date, this.time, this.isCompleted);
+  Task(this.title, this.note, this.date, this.time, this.isCompleted,
+      this.folderId);
 }

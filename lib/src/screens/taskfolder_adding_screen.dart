@@ -292,6 +292,7 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                               onPressed: () {
                                 if (_folderNameController.text.isNotEmpty) {
                                   taskProvider.addTaskFolder(
+                                      UniqueKey().hashCode,
                                       _folderNameController.text,
                                       _boxColors[_selectedBoxIndex],
                                       0);

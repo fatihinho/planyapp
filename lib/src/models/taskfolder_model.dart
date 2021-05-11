@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 class TaskFolder {
-  String folderName;
-  int taskNumber;
+  int id;
+  String name;
+  int taskCount;
   Color iconColor;
 
-  TaskFolder(this.folderName, this.iconColor, this.taskNumber);
+  TaskFolder(this.id, this.name, this.iconColor, this.taskCount);
 }

@@ -4,6 +4,9 @@ import 'package:planyapp/src/utils/datetime_format_util.dart';
 import 'package:provider/provider.dart';
 
 class TaskAddingScreen extends StatefulWidget {
+  final int _folderId;
+  TaskAddingScreen(this._folderId);
+
   @override
   _TaskAddingScreenState createState() => _TaskAddingScreenState();
 }
@@ -163,8 +166,13 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                       noteController.text.isNotEmpty &&
                                       _date != null &&
                                       _time != null) {
-                                    taskProvider.addTask(titleController.text,
-                                        noteController.text, _date!, _time!);
+                                    taskProvider.addTask(
+                                        titleController.text,
+                                        noteController.text,
+                                        _date!,
+                                        _time!,
+                                        false,
+                                        widget._folderId);
                                     Navigator.of(context).pop();
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(

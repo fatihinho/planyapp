@@ -6,6 +6,9 @@ import 'package:planyapp/src/widgets/textstyles_widget.dart';
 import 'package:provider/provider.dart';
 
 class DailyTaskScreen extends StatefulWidget {
+  final int _folderId;
+  DailyTaskScreen(this._folderId);
+
   @override
   _DailyTaskScreenState createState() => _DailyTaskScreenState();
 }
@@ -27,59 +30,64 @@ class _DailyTaskScreenState extends State<DailyTaskScreen> {
   Widget build(BuildContext context) {
     TaskProvider taskProvider = Provider.of<TaskProvider>(context);
     List<Task> tasks = Provider.of<TaskProvider>(context).tasks;
+
     return Container(
       child: ListView.builder(
           itemCount: tasks.length,
           itemBuilder: (context, index) {
-            return Dismissible(
-              key: ObjectKey(tasks[index]),
-              background: _stackBehindDismiss(),
-              direction: DismissDirection.endToStart,
-              onDismissed: (direction) {
-                setState(() {
-                  taskProvider.deleteTask(index);
-                });
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    backgroundColor: Colors.redAccent,
-                    content: Text('Deleted $index')));
-              },
-              child: ListTile(
-                leading: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        tasks[index].isCompleted = !tasks[index].isCompleted;
-                      });
-                    },
-                    child: tasks[index].isCompleted
-                        ? TasksTextStyles.completedTaskLeading
-                        : TasksTextStyles.uncompletedTaskLeading),
-                title: Text(
-                  '${tasks[index].title}',
-                  style: tasks[index].isCompleted
-                      ? TasksTextStyles.completedTitleTextStyle
-                      : TasksTextStyles.uncompletedTitleTextStyle,
-                ),
-                subtitle: Text('${tasks[index].note}',
+            if (tasks[index].folderId == widget._folderId) {
+              return Dismissible(
+                key: ObjectKey(tasks[index]),
+                background: _stackBehindDismiss(),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) {
+                  setState(() {
+                    taskProvider.deleteTask(index, widget._folderId);
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.redAccent,
+                      content: Text('Deleted $index')));
+                },
+                child: ListTile(
+                  leading: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          tasks[index].isCompleted = !tasks[index].isCompleted;
+                        });
+                      },
+                      child: tasks[index].isCompleted
+                          ? TasksTextStyles.completedTaskLeading
+                          : TasksTextStyles.uncompletedTaskLeading),
+                  title: Text(
+                    '${tasks[index].title}',
                     style: tasks[index].isCompleted
-                        ? TasksTextStyles.completedNoteStyle
-                        : TasksTextStyles.uncompletedNoteStyle),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                        '${DateTimeFormat.formatDate(tasks[index].date.day)}/${DateTimeFormat.formatDate(tasks[index].date.month)}/${tasks[index].date.year}',
-                        style: tasks[index].isCompleted
-                            ? TasksTextStyles.completedDateTimeStyle
-                            : TasksTextStyles.uncompletedDateTimeStyle),
-                    Text(
-                        '${DateTimeFormat.formatTime(tasks[index].time.hour)}:${DateTimeFormat.formatTime(tasks[index].time.minute)}',
-                        style: tasks[index].isCompleted
-                            ? TasksTextStyles.completedDateTimeStyle
-                            : TasksTextStyles.uncompletedDateTimeStyle),
-                  ],
+                        ? TasksTextStyles.completedTitleTextStyle
+                        : TasksTextStyles.uncompletedTitleTextStyle,
+                  ),
+                  subtitle: Text('${tasks[index].note}',
+                      style: tasks[index].isCompleted
+                          ? TasksTextStyles.completedNoteStyle
+                          : TasksTextStyles.uncompletedNoteStyle),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                          '${DateTimeFormat.formatDate(tasks[index].date.day)}/${DateTimeFormat.formatDate(tasks[index].date.month)}/${tasks[index].date.year}',
+                          style: tasks[index].isCompleted
+                              ? TasksTextStyles.completedDateTimeStyle
+                              : TasksTextStyles.uncompletedDateTimeStyle),
+                      Text(
+                          '${DateTimeFormat.formatTime(tasks[index].time.hour)}:${DateTimeFormat.formatTime(tasks[index].time.minute)}',
+                          style: tasks[index].isCompleted
+                              ? TasksTextStyles.completedDateTimeStyle
+                              : TasksTextStyles.uncompletedDateTimeStyle),
+                    ],
+                  ),
                 ),
-              ),
-            );
+              );
+            } else {
+              return Container();
+            }
           }),
     );
   }

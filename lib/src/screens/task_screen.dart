@@ -5,9 +5,10 @@ import 'package:planyapp/src/screens/task_adding_screen.dart';
 import 'package:planyapp/src/screens/weekly_task_screen.dart';
 
 class TaskScreen extends StatefulWidget {
+  final int _folderId;
   final String _title;
   final Color _color;
-  TaskScreen(this._title, this._color);
+  TaskScreen(this._folderId, this._title, this._color);
 
   @override
   _TaskScreenState createState() => _TaskScreenState();
@@ -22,10 +23,10 @@ class _TaskScreenState extends State<TaskScreen> {
     });
   }
 
-  Route _navigateToTaskAdding() {
+  Route _navigateToTaskAdding(int folderId) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
-          TaskAddingScreen(),
+          TaskAddingScreen(folderId),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = Offset(1.0, 0.0);
         var end = Offset.zero;
@@ -40,17 +41,17 @@ class _TaskScreenState extends State<TaskScreen> {
     );
   }
 
-  final List<Widget> _widgetOptions = [
-    DailyTaskScreen(),
-    WeeklyTaskScreen(),
-    MonthlyTaskScreen()
-  ];
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var screenHeight = size.height;
     var screenWidth = size.width;
+
+    final List<Widget> _widgetOptions = [
+      DailyTaskScreen(widget._folderId),
+      WeeklyTaskScreen(),
+      MonthlyTaskScreen()
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -88,7 +89,7 @@ class _TaskScreenState extends State<TaskScreen> {
         backgroundColor: Colors.cyan,
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context).push(_navigateToTaskAdding());
+          Navigator.of(context).push(_navigateToTaskAdding(widget._folderId));
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
