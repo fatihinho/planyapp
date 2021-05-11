@@ -4,13 +4,20 @@ import 'package:planyapp/src/screens/task_screen.dart';
 import 'package:planyapp/src/screens/taskfolder_adding_screen.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
-  Route _navigateToTasks(String title, Color color) {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _plannedTaskCount = 0;
+
+  Route _navigateToTasks(int folderId, String title, Color color) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
-          TaskScreen(title, color),
+          TaskScreen(folderId, title, color),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = Offset(0.0, -1.0);
+        var begin = Offset(0.0, 1.0);
         var end = Offset.zero;
         var curve = Curves.ease;
         var tween =
@@ -47,7 +54,14 @@ class HomeScreen extends StatelessWidget {
     var screenHeight = size.height;
     var screenWidth = size.width;
 
+    var taskProvider = Provider.of<TaskProvider>(context);
     var taskFolders = Provider.of<TaskProvider>(context).taskFolders;
+
+    _plannedTaskCount = 0;
+
+    taskFolders.forEach((element) {
+      _plannedTaskCount += element.taskCount;
+    });
 
     return Scaffold(
         body: Container(
@@ -87,10 +101,15 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 8.0),
-                        Text(
-                          'Planlanmış 3 tane işin var',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        _plannedTaskCount > 0
+                            ? Text(
+                                'Planlanmış $_plannedTaskCount tane işin var',
+                                style: TextStyle(color: Colors.white),
+                              )
+                            : Text(
+                                'Planlanmış hiç işin yok',
+                                style: TextStyle(color: Colors.white),
+                              ),
                         SizedBox(height: 48.0),
                         ElevatedButton(
                             style:
@@ -118,72 +137,92 @@ class HomeScreen extends StatelessWidget {
             child: Container(
               decoration:
                   BoxDecoration(shape: BoxShape.rectangle, color: Colors.white),
-              child: GridView.builder(
-                padding: const EdgeInsets.all(0.0),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: 1.5,
-                  crossAxisCount: 2,
-                ),
-                itemCount: taskFolders.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(_navigateToTasks(
-                            '${taskFolders[index].folderName}',
-                            taskFolders[index].iconColor));
-                      },
-                      onLongPress: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('$index. plan'),
+              child: taskFolders.isNotEmpty
+                  ? GridView.builder(
+                      padding: const EdgeInsets.all(0.0),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: 1.5,
+                        crossAxisCount: 2,
+                      ),
+                      itemCount: taskFolders.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(_navigateToTasks(
+                                  taskFolders[index].id,
+                                  '${taskFolders[index].name}',
+                                  taskFolders[index].iconColor));
+                            },
+                            onLongPress: () {
+                              taskProvider.deleteTaskFolder(index);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('$index. plan silindi'),
+                                ),
+                              );
+                            },
+                            onDoubleTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Id: ${taskFolders[index].id}'),
+                                ),
+                              );
+                            },
+                            child: Card(
+                              elevation: 5,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Icon(
+                                        Icons.folder,
+                                        color: taskFolders[index].iconColor,
+                                        size: 28.0,
+                                      ),
+                                      Text(
+                                        '${taskFolders[index].taskCount}',
+                                        style: TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.indigo),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Text(
+                                        '${taskFolders[index].name}',
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text('')
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
                         );
                       },
-                      child: Card(
-                        elevation: 5,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Icon(
-                                  Icons.folder,
-                                  color: taskFolders[index].iconColor,
-                                  size: 28.0,
-                                ),
-                                Text(
-                                  '${taskFolders[index].taskNumber}',
-                                  style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.indigo),
-                                )
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text(
-                                  '${taskFolders[index].folderName}',
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text('')
-                              ],
-                            )
-                          ],
-                        ),
+                    )
+                  : Center(
+                      child: Icon(
+                        Icons.create_new_folder,
+                        size: 148.0,
+                        color: Colors.cyan[200],
                       ),
                     ),
-                  );
-                },
-              ),
             ),
           ),
         ],
