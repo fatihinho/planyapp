@@ -64,22 +64,34 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
     return Scaffold(
         appBar: AppBar(
           elevation: 0.0,
-          backgroundColor: Colors.indigo,
+          backgroundColor: Colors.cyan,
         ),
         body: Stack(
           children: [
             Container(
               width: screenWidth,
               height: screenHeight,
-              color: Colors.indigo,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Yeni Plan',
-                  style: TextStyle(
-                      fontSize: 28.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+              color: Colors.cyan,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.add_circle,
+                        color: Colors.white,
+                        size: 36.0,
+                      ),
+                      SizedBox(width: 8.0),
+                      Text(
+                        'Yeni Plan',
+                        style: TextStyle(
+                            fontSize: 28.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -87,7 +99,11 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
               alignment: Alignment.bottomCenter,
               child: SingleChildScrollView(
                 child: Container(
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.0),
+                          topRight: Radius.circular(30.0))),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
@@ -184,7 +200,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                 },
                                 child: Text('Oluştur'),
                                 style: ElevatedButton.styleFrom(
-                                    primary: Colors.cyan)))
+                                    primary: Colors.indigo)))
                       ],
                     ),
                   ),
