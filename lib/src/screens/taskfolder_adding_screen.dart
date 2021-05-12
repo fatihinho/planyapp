@@ -49,14 +49,26 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
               width: screenWidth,
               height: screenHeight,
               color: Colors.indigo,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Yeni Klasör',
-                  style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.create_new_folder,
+                        color: Colors.white,
+                        size: 36.0,
+                      ),
+                      SizedBox(width: 8.0),
+                      Text(
+                        'Yeni Klasör',
+                        style: TextStyle(
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -64,7 +76,11 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
               alignment: Alignment.bottomCenter,
               child: SingleChildScrollView(
                 child: Container(
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.0),
+                          topRight: Radius.circular(30.0))),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
