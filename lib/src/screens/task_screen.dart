@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:planyapp/src/screens/monthly_task_screen.dart';
-import 'package:planyapp/src/screens/daily_task_screen.dart';
+import 'package:planyapp/src/models/task_model.dart';
+import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/task_adding_screen.dart';
-import 'package:planyapp/src/screens/weekly_task_screen.dart';
+import 'package:planyapp/src/utils/datetime_format_util.dart';
+import 'package:planyapp/src/widgets/textstyles_widget.dart';
+import 'package:provider/provider.dart';
 
 class TaskScreen extends StatefulWidget {
   final int _folderId;
@@ -15,14 +17,6 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   Route _navigateToTaskAdding(int folderId) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
@@ -41,17 +35,26 @@ class _TaskScreenState extends State<TaskScreen> {
     );
   }
 
+  Widget _stackBehindDismiss() {
+    return Container(
+      alignment: Alignment.centerRight,
+      padding: EdgeInsets.only(right: 20.0),
+      color: Colors.red,
+      child: Icon(
+        Icons.delete,
+        color: Colors.white,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var screenHeight = size.height;
     var screenWidth = size.width;
 
-    final List<Widget> _widgetOptions = [
-      DailyTaskScreen(widget._folderId),
-      WeeklyTaskScreen(),
-      MonthlyTaskScreen()
-    ];
+    TaskProvider taskProvider = Provider.of<TaskProvider>(context);
+    List<Task> tasks = Provider.of<TaskProvider>(context).tasks;
 
     return Scaffold(
       appBar: AppBar(
@@ -64,23 +67,98 @@ class _TaskScreenState extends State<TaskScreen> {
             width: screenWidth,
             height: screenHeight,
             color: widget._color,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                '${widget._title}',
-                style: TextStyle(
-                    fontSize: 28.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.folder,
+                      color: Colors.white,
+                      size: 36.0,
+                    ),
+                    SizedBox(width: 8.0),
+                    Text(
+                      '${widget._title}',
+                      style: TextStyle(
+                          fontSize: 28.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              color: Colors.white,
-              child: _widgetOptions[_selectedIndex],
-              height: screenHeight * 0.68,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30.0),
+                      topRight: Radius.circular(30.0))),
+              child: ListView.builder(
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) {
+                    if (tasks[index].folderId == widget._folderId) {
+                      return Dismissible(
+                        key: ObjectKey(tasks[index]),
+                        background: _stackBehindDismiss(),
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (direction) {
+                          setState(() {
+                            taskProvider.deleteTask(index, widget._folderId);
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              backgroundColor: Colors.redAccent,
+                              content: Text('Plan Silindi')));
+                        },
+                        child: ListTile(
+                          leading: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  tasks[index].isCompleted =
+                                      !tasks[index].isCompleted;
+                                });
+                              },
+                              child: tasks[index].isCompleted
+                                  ? TasksTextStyles.completedTaskLeading
+                                  : TasksTextStyles.uncompletedTaskLeading),
+                          title: Text(
+                            '${tasks[index].title}',
+                            style: tasks[index].isCompleted
+                                ? TasksTextStyles.completedTitleTextStyle
+                                : TasksTextStyles.uncompletedTitleTextStyle,
+                          ),
+                          subtitle: Text('${tasks[index].note}',
+                              style: tasks[index].isCompleted
+                                  ? TasksTextStyles.completedNoteStyle
+                                  : TasksTextStyles.uncompletedNoteStyle),
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                  '${DateTimeFormat.formatDate(tasks[index].date.day)}/${DateTimeFormat.formatDate(tasks[index].date.month)}/${tasks[index].date.year}',
+                                  style: tasks[index].isCompleted
+                                      ? TasksTextStyles.completedDateTimeStyle
+                                      : TasksTextStyles
+                                          .uncompletedDateTimeStyle),
+                              Text(
+                                  '${DateTimeFormat.formatTime(tasks[index].time.hour)}:${DateTimeFormat.formatTime(tasks[index].time.minute)}',
+                                  style: tasks[index].isCompleted
+                                      ? TasksTextStyles.completedDateTimeStyle
+                                      : TasksTextStyles
+                                          .uncompletedDateTimeStyle),
+                            ],
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }),
+              height: screenHeight * 0.75,
             ),
           )
         ],
@@ -91,19 +169,6 @@ class _TaskScreenState extends State<TaskScreen> {
         onPressed: () {
           Navigator.of(context).push(_navigateToTaskAdding(widget._folderId));
         },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.indigo,
-        backgroundColor: Colors.white,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: [
-          BottomNavigationBarItem(label: 'Günlük', icon: Icon(Icons.today)),
-          BottomNavigationBarItem(
-              label: 'Haftalık', icon: Icon(Icons.calendar_view_day_outlined)),
-          BottomNavigationBarItem(
-              label: 'Aylık', icon: Icon(Icons.calendar_today_rounded)),
-        ],
       ),
     );
   }
