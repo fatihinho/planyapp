@@ -58,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
     var taskFolders = Provider.of<TaskProvider>(context).taskFolders;
 
     _plannedTaskCount = 0;
-
     taskFolders.forEach((element) {
       _plannedTaskCount += element.taskCount;
     });
@@ -103,11 +102,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(height: 8.0),
                         _plannedTaskCount > 0
                             ? Text(
-                                'Planlanmış $_plannedTaskCount tane işin var',
+                                'Planlanan $_plannedTaskCount tane işin var',
                                 style: TextStyle(color: Colors.white),
                               )
                             : Text(
-                                'Planlanmış hiç işin yok',
+                                'Planlanan hiç işin yok',
                                 style: TextStyle(color: Colors.white),
                               ),
                         SizedBox(height: 48.0),
@@ -159,7 +158,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               taskProvider.deleteTaskFolder(index);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('$index. plan silindi'),
+                                  backgroundColor: Colors.redAccent,
+                                  content: Text('Klasör Silindi'),
                                 ),
                               );
                             },
