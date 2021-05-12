@@ -8,6 +8,9 @@ class TaskFolderAddingScreen extends StatefulWidget {
 }
 
 class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
+  bool _isPrivate = false;
+
+  var _passwordController = TextEditingController();
   var _folderNameController = TextEditingController();
 
   BoxDecoration _selectedColorBoxDecoration(Color color) {
@@ -29,6 +32,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
     Colors.teal,
     Colors.brown
   ];
+
+  @override
+  void dispose() {
+    super.dispose();
+    _passwordController.dispose();
+    _folderNameController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,10 +95,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
-                        TextField(
-                            controller: _folderNameController,
-                            decoration:
-                                InputDecoration(labelText: 'Klasör Adı')),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: TextField(
+                              controller: _folderNameController,
+                              decoration:
+                                  InputDecoration(labelText: 'Klasör Adı')),
+                        ),
                         SizedBox(height: 24.0),
                         Column(children: [
                           Row(
@@ -300,6 +313,56 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                 ),
                               ])
                         ]),
+                        SizedBox(height: 24.0),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _isPrivate = false;
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                      color: _isPrivate
+                                          ? Colors.grey[200]
+                                          : Colors.green[400],
+                                      height: 50.0,
+                                      width: screenWidth * 0.4,
+                                      child:
+                                          Center(child: Icon(Icons.lock_open))),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _isPrivate = true;
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                      color: _isPrivate
+                                          ? Colors.red[400]
+                                          : Colors.grey[200],
+                                      height: 50.0,
+                                      width: screenWidth * 0.4,
+                                      child: Center(child: Icon(Icons.lock))),
+                                ),
+                              )
+                            ]),
+                        _isPrivate
+                            ? Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: TextField(
+                                    obscureText: true,
+                                    controller: _passwordController,
+                                    decoration:
+                                        InputDecoration(labelText: 'Şifre')),
+                              )
+                            : Container(),
                         SizedBox(height: 48.0),
                         Container(
                             height: 50.0,
@@ -307,16 +370,31 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                             child: ElevatedButton(
                               onPressed: () {
                                 if (_folderNameController.text.isNotEmpty) {
-                                  taskProvider.addTaskFolder(
+                                  if (!_isPrivate ||
+                                      (_isPrivate &&
+                                          _passwordController
+                                              .text.isNotEmpty)) {
+                                    taskProvider.addTaskFolder(
                                       UniqueKey().hashCode,
                                       _folderNameController.text,
                                       _boxColors[_selectedBoxIndex],
-                                      0);
-                                  Navigator.of(context).pop();
+                                      _isPrivate,
+                                      _passwordController.text,
+                                      0,
+                                    );
+                                    Navigator.of(context).pop();
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            backgroundColor:
+                                                Colors.orangeAccent,
+                                            content:
+                                                Text('Eksik Alan Mevcut!')));
+                                  }
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                          backgroundColor: Colors.redAccent,
+                                          backgroundColor: Colors.orangeAccent,
                                           content: Text('Eksik Alan Mevcut!')));
                                 }
                               },

@@ -19,8 +19,10 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addTaskFolder(int id, String name, Color iconColor, int taskCount) {
-    taskFolders.add(TaskFolder(id, name, iconColor, taskCount));
+  void addTaskFolder(int id, String name, Color iconColor, bool isPrivate,
+      String? password, int taskCount) {
+    taskFolders
+        .add(TaskFolder(id, name, iconColor, isPrivate, password, taskCount));
     notifyListeners();
   }
 

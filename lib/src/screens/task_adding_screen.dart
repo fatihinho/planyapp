@@ -12,8 +12,8 @@ class TaskAddingScreen extends StatefulWidget {
 }
 
 class _TaskAddingScreenState extends State<TaskAddingScreen> {
-  var titleController = TextEditingController();
-  var noteController = TextEditingController();
+  var _titleController = TextEditingController();
+  var _noteController = TextEditingController();
 
   DateTime? _date;
   TimeOfDay? _time;
@@ -51,6 +51,13 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
         _time = _timePicker;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _titleController.dispose();
+    _noteController.dispose();
   }
 
   @override
@@ -109,10 +116,10 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                     child: Column(
                       children: [
                         TextField(
-                            controller: titleController,
+                            controller: _titleController,
                             decoration: InputDecoration(labelText: 'Başlık')),
                         TextField(
-                            controller: noteController,
+                            controller: _noteController,
                             decoration: InputDecoration(labelText: 'Not')),
                         SizedBox(height: 24.0),
                         Row(
@@ -178,13 +185,13 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                             width: screenWidth,
                             child: ElevatedButton(
                                 onPressed: () {
-                                  if (titleController.text.isNotEmpty &&
-                                      noteController.text.isNotEmpty &&
+                                  if (_titleController.text.isNotEmpty &&
+                                      _noteController.text.isNotEmpty &&
                                       _date != null &&
                                       _time != null) {
                                     taskProvider.addTask(
-                                        titleController.text,
-                                        noteController.text,
+                                        _titleController.text,
+                                        _noteController.text,
                                         _date!,
                                         _time!,
                                         false,
@@ -193,7 +200,8 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
-                                            backgroundColor: Colors.redAccent,
+                                            backgroundColor:
+                                                Colors.orangeAccent,
                                             content:
                                                 Text('Eksik Alan Mevcut!')));
                                   }

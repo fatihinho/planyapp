@@ -78,12 +78,15 @@ class _TaskScreenState extends State<TaskScreen> {
                       size: 36.0,
                     ),
                     SizedBox(width: 8.0),
-                    Text(
-                      '${widget._title}',
-                      style: TextStyle(
-                          fontSize: 28.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                    Expanded(
+                      child: Text(
+                        '${widget._title}',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 28.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
                     ),
                   ],
                 ),
@@ -98,66 +101,80 @@ class _TaskScreenState extends State<TaskScreen> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30.0),
                       topRight: Radius.circular(30.0))),
-              child: ListView.builder(
-                  itemCount: tasks.length,
-                  itemBuilder: (context, index) {
-                    if (tasks[index].folderId == widget._folderId) {
-                      return Dismissible(
-                        key: ObjectKey(tasks[index]),
-                        background: _stackBehindDismiss(),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (direction) {
-                          setState(() {
-                            taskProvider.deleteTask(index, widget._folderId);
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              backgroundColor: Colors.redAccent,
-                              content: Text('Plan Silindi')));
-                        },
-                        child: ListTile(
-                          leading: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  tasks[index].isCompleted =
-                                      !tasks[index].isCompleted;
-                                });
-                              },
-                              child: tasks[index].isCompleted
-                                  ? TasksTextStyles.completedTaskLeading
-                                  : TasksTextStyles.uncompletedTaskLeading),
-                          title: Text(
-                            '${tasks[index].title}',
-                            style: tasks[index].isCompleted
-                                ? TasksTextStyles.completedTitleTextStyle
-                                : TasksTextStyles.uncompletedTitleTextStyle,
-                          ),
-                          subtitle: Text('${tasks[index].note}',
-                              style: tasks[index].isCompleted
-                                  ? TasksTextStyles.completedNoteStyle
-                                  : TasksTextStyles.uncompletedNoteStyle),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                  '${DateTimeFormat.formatDate(tasks[index].date.day)}/${DateTimeFormat.formatDate(tasks[index].date.month)}/${tasks[index].date.year}',
+              child: tasks
+                      .where((element) => element.folderId == widget._folderId)
+                      .isNotEmpty
+                  ? ListView.builder(
+                      itemCount: tasks.length,
+                      itemBuilder: (context, index) {
+                        if (tasks[index].folderId == widget._folderId) {
+                          return Dismissible(
+                            key: ObjectKey(tasks[index]),
+                            background: _stackBehindDismiss(),
+                            direction: DismissDirection.endToStart,
+                            onDismissed: (direction) {
+                              setState(() {
+                                taskProvider.deleteTask(
+                                    index, widget._folderId);
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      backgroundColor: Colors.redAccent,
+                                      content: Text('Plan Silindi')));
+                            },
+                            child: ListTile(
+                              leading: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      tasks[index].isCompleted =
+                                          !tasks[index].isCompleted;
+                                    });
+                                  },
+                                  child: tasks[index].isCompleted
+                                      ? TasksTextStyles.completedTaskLeading
+                                      : TasksTextStyles.uncompletedTaskLeading),
+                              title: Text(
+                                '${tasks[index].title}',
+                                style: tasks[index].isCompleted
+                                    ? TasksTextStyles.completedTitleTextStyle
+                                    : TasksTextStyles.uncompletedTitleTextStyle,
+                              ),
+                              subtitle: Text('${tasks[index].note}',
                                   style: tasks[index].isCompleted
-                                      ? TasksTextStyles.completedDateTimeStyle
-                                      : TasksTextStyles
-                                          .uncompletedDateTimeStyle),
-                              Text(
-                                  '${DateTimeFormat.formatTime(tasks[index].time.hour)}:${DateTimeFormat.formatTime(tasks[index].time.minute)}',
-                                  style: tasks[index].isCompleted
-                                      ? TasksTextStyles.completedDateTimeStyle
-                                      : TasksTextStyles
-                                          .uncompletedDateTimeStyle),
-                            ],
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Container();
-                    }
-                  }),
+                                      ? TasksTextStyles.completedNoteStyle
+                                      : TasksTextStyles.uncompletedNoteStyle),
+                              trailing: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                      '${DateTimeFormat.formatDate(tasks[index].date.day)}/${DateTimeFormat.formatDate(tasks[index].date.month)}/${tasks[index].date.year}',
+                                      style: tasks[index].isCompleted
+                                          ? TasksTextStyles
+                                              .completedDateTimeStyle
+                                          : TasksTextStyles
+                                              .uncompletedDateTimeStyle),
+                                  Text(
+                                      '${DateTimeFormat.formatTime(tasks[index].time.hour)}:${DateTimeFormat.formatTime(tasks[index].time.minute)}',
+                                      style: tasks[index].isCompleted
+                                          ? TasksTextStyles
+                                              .completedDateTimeStyle
+                                          : TasksTextStyles
+                                              .uncompletedDateTimeStyle),
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      })
+                  : Center(
+                      child: Icon(
+                        Icons.add,
+                        size: 148.0,
+                        color: Colors.indigo[200],
+                      ),
+                    ),
               height: screenHeight * 0.75,
             ),
           )
