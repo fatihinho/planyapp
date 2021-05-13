@@ -243,13 +243,39 @@ class _HomeScreenState extends State<HomeScreen> {
                                   }
                                 },
                                 onLongPress: () {
-                                  taskProvider.deleteTaskFolder(index);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      backgroundColor: Colors.redAccent,
-                                      content: Text('Klasör Silindi'),
-                                    ),
-                                  );
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                            title: Text(
+                                                "Klasör'ü silmek istediğinden emin misin?"),
+                                            actions: [
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    primary: Colors.redAccent),
+                                                child: Text('İptal'),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                              ElevatedButton(
+                                                child: Text('Sil'),
+                                                onPressed: () {
+                                                  taskProvider
+                                                      .deleteTaskFolder(index);
+                                                  Navigator.of(context).pop();
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      backgroundColor:
+                                                          Colors.redAccent,
+                                                      content: Text(
+                                                          'Klasör Silindi'),
+                                                    ),
+                                                  );
+                                                },
+                                              )
+                                            ],
+                                          ));
                                 },
                                 onDoubleTap: () {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -263,68 +289,50 @@ class _HomeScreenState extends State<HomeScreen> {
                                   elevation: 5,
                                   child: Column(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                        MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Expanded(
-                                            child: Center(
-                                              child: Icon(
-                                                Icons.folder,
-                                                color: taskFolders[index]
-                                                    .iconColor,
-                                                size: 28.0,
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Center(
-                                              child: Text(
-                                                '${taskFolders[index].taskCount}',
-                                                style: TextStyle(
-                                                    fontSize: 18.0,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.indigo),
-                                              ),
-                                            ),
-                                          )
-                                        ],
+                                      Text(
+                                        '${taskFolders[index].name}',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceAround,
                                         children: [
-                                          Expanded(
-                                            child: Center(
-                                              child: Text(
-                                                '${taskFolders[index].name}',
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
+                                          Center(
+                                            child: Icon(
+                                              Icons.folder,
+                                              color:
+                                                  taskFolders[index].iconColor,
+                                              size: 28.0,
+                                            ),
+                                          ),
+                                          Center(
+                                            child: Text(
+                                              '${taskFolders[index].taskCount}',
+                                              style: TextStyle(
                                                   fontSize: 18.0,
                                                   fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
+                                                  color: Colors.indigo),
                                             ),
                                           ),
                                           taskFolders[index].isPrivate
-                                              ? Expanded(
-                                                  child: Center(
-                                                      child: Icon(
+                                              ? Center(
+                                                  child: Icon(
                                                   Icons.lock,
                                                   color: Colors.red[400],
-                                                )))
-                                              : Expanded(
-                                                  child: Center(
-                                                      child: Icon(
+                                                ))
+                                              : Center(
+                                                  child: Icon(
                                                   Icons.lock_open,
                                                   color: Colors.green[400],
-                                                )))
+                                                ))
                                         ],
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
