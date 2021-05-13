@@ -137,7 +137,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                           color: Colors.indigo,
                                           fontWeight: FontWeight.bold)),
                                 ),
-                                SizedBox(width: 8.0),
+                                SizedBox(width: 4.0),
                                 _date != null
                                     ? GestureDetector(
                                         onTap: () {
@@ -147,7 +147,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                         },
                                         child: Text('(Sıfırla)',
                                             style: TextStyle(
-                                                color: Colors.grey,
+                                                color: Colors.redAccent,
                                                 fontWeight: FontWeight.bold)),
                                       )
                                     : Container()
@@ -184,7 +184,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                           color: Colors.indigo,
                                           fontWeight: FontWeight.bold)),
                                 ),
-                                SizedBox(width: 8.0),
+                                SizedBox(width: 4.0),
                                 _time != null
                                     ? GestureDetector(
                                         onTap: () {
@@ -194,7 +194,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                         },
                                         child: Text('(Sıfırla)',
                                             style: TextStyle(
-                                                color: Colors.grey,
+                                                color: Colors.redAccent,
                                                 fontWeight: FontWeight.bold)),
                                       )
                                     : Container()
