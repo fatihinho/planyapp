@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class TasksTextStyles {
   static Icon get uncompletedTaskLeading =>
-      Icon(Icons.check_box_outline_blank, size: 36.0);
+      Icon(Icons.radio_button_off, size: 36.0);
   static Icon get completedTaskLeading => Icon(
-        Icons.check_box_rounded,
+        Icons.check_circle,
         color: Colors.cyan,
         size: 36.0,
       );
