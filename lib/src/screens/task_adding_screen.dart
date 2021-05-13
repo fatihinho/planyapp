@@ -125,15 +125,33 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                _selectDate(context);
-                              },
-                              child: Text('Tarih Ekle',
-                                  style: TextStyle(
-                                      fontSize: 18.0,
-                                      color: Colors.indigo,
-                                      fontWeight: FontWeight.bold)),
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    _selectDate(context);
+                                  },
+                                  child: Text('Tarih Ekle',
+                                      style: TextStyle(
+                                          fontSize: 18.0,
+                                          color: Colors.indigo,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                SizedBox(width: 8.0),
+                                _date != null
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _date = null;
+                                          });
+                                        },
+                                        child: Text('(Sıfırla)',
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontWeight: FontWeight.bold)),
+                                      )
+                                    : Container()
+                              ],
                             ),
                             _date != null
                                 ? Text(
@@ -154,15 +172,33 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                _selectTime(context);
-                              },
-                              child: Text('Saat Ekle',
-                                  style: TextStyle(
-                                      fontSize: 18.0,
-                                      color: Colors.indigo,
-                                      fontWeight: FontWeight.bold)),
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    _selectTime(context);
+                                  },
+                                  child: Text('Saat Ekle',
+                                      style: TextStyle(
+                                          fontSize: 18.0,
+                                          color: Colors.indigo,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                SizedBox(width: 8.0),
+                                _time != null
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _time = null;
+                                          });
+                                        },
+                                        child: Text('(Sıfırla)',
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontWeight: FontWeight.bold)),
+                                      )
+                                    : Container()
+                              ],
                             ),
                             _time != null
                                 ? Text(
@@ -186,14 +222,12 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                             child: ElevatedButton(
                                 onPressed: () {
                                   if (_titleController.text.isNotEmpty &&
-                                      _noteController.text.isNotEmpty &&
-                                      _date != null &&
-                                      _time != null) {
+                                      _noteController.text.isNotEmpty) {
                                     taskProvider.addTask(
                                         _titleController.text,
                                         _noteController.text,
-                                        _date!,
-                                        _time!,
+                                        _date,
+                                        _time,
                                         false,
                                         widget._folderId);
                                     Navigator.of(context).pop();

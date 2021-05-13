@@ -6,7 +6,7 @@ class TaskProvider extends ChangeNotifier {
   List<Task> tasks = [];
   List<TaskFolder> taskFolders = [];
 
-  void addTask(String title, String note, DateTime date, TimeOfDay time,
+  void addTask(String title, String note, DateTime? date, TimeOfDay? time,
       bool isCompleted, int folderId) {
     tasks.add(Task(title, note, date, time, isCompleted, folderId));
     taskFolders.firstWhere((element) => element.id == folderId).taskCount++;
