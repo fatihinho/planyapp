@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:planyapp/src/models/task_model.dart';
 import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/task_adding_screen.dart';
-import 'package:planyapp/src/utils/datetime_format_util.dart';
-import 'package:planyapp/src/widgets/textstyles_widget.dart';
+import 'package:planyapp/src/widgets/task_list_widget.dart';
 import 'package:provider/provider.dart';
 
 class TaskScreen extends StatefulWidget {
@@ -17,6 +16,12 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
+  var _searchTyped = false;
+  var _appBarSearch = const TextField();
+  var _searchIcon = const Icon(Icons.search);
+
+  final _searchController = TextEditingController();
+
   Route _navigateToTaskAdding(int folderId) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
@@ -35,16 +40,46 @@ class _TaskScreenState extends State<TaskScreen> {
     );
   }
 
-  Widget _stackBehindDismiss() {
-    return Container(
-      alignment: Alignment.centerRight,
-      padding: EdgeInsets.only(right: 20.0),
-      color: Colors.red,
-      child: Icon(
-        Icons.delete,
-        color: Colors.white,
-      ),
-    );
+  void _searchPressed() {
+    setState(() {
+      if (this._searchIcon.icon == Icons.search) {
+        _searchTyped = !_searchTyped;
+        this._searchIcon = Icon(Icons.close);
+        if (_searchTyped) {
+          this._appBarSearch = TextField(
+              cursorColor: Colors.white54,
+              autofocus: true,
+              controller: _searchController,
+              onChanged: (String value) {
+                setState(() {});
+              },
+              style: TextStyle(color: Colors.white54),
+              decoration: InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white54)),
+                prefixIcon: Icon(Icons.search, color: Colors.white54),
+                suffix: GestureDetector(
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white54,
+                    size: 20.0,
+                  ),
+                  onTap: () {
+                    setState(() {
+                      this._searchController.clear();
+                    });
+                  },
+                ),
+                hintText: 'Ara',
+                hintStyle: TextStyle(color: Colors.white54),
+              ));
+        }
+      } else {
+        _searchTyped = !_searchTyped;
+        this._searchIcon = Icon(Icons.search);
+        _searchController.clear();
+      }
+    });
   }
 
   @override
@@ -53,13 +88,24 @@ class _TaskScreenState extends State<TaskScreen> {
     var screenHeight = size.height;
     var screenWidth = size.width;
 
-    TaskProvider taskProvider = Provider.of<TaskProvider>(context);
     List<Task> tasks = Provider.of<TaskProvider>(context).tasks;
 
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: widget._color,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: GestureDetector(
+              child: _searchIcon,
+              onTap: () {
+                _searchPressed();
+              },
+            ),
+          ),
+        ],
+        title: _searchTyped ? _appBarSearch : null,
       ),
       body: Stack(
         children: [
@@ -108,72 +154,16 @@ class _TaskScreenState extends State<TaskScreen> {
                       itemCount: tasks.length,
                       itemBuilder: (context, index) {
                         if (tasks[index].folderId == widget._folderId) {
-                          return Dismissible(
-                            key: ObjectKey(tasks[index]),
-                            background: _stackBehindDismiss(),
-                            direction: DismissDirection.endToStart,
-                            onDismissed: (direction) {
-                              setState(() {
-                                taskProvider.deleteTask(
-                                    index, widget._folderId);
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      backgroundColor: Colors.redAccent,
-                                      content: Text('Plan Silindi')));
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
-                                leading: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        tasks[index].isCompleted =
-                                            !tasks[index].isCompleted;
-                                      });
-                                    },
-                                    child: tasks[index].isCompleted
-                                        ? TasksTextStyles.completedTaskLeading
-                                        : TasksTextStyles
-                                            .uncompletedTaskLeading),
-                                title: Text(
-                                  '${tasks[index].title}',
-                                  style: tasks[index].isCompleted
-                                      ? TasksTextStyles.completedTitleTextStyle
-                                      : TasksTextStyles
-                                          .uncompletedTitleTextStyle,
-                                ),
-                                subtitle: Text('${tasks[index].note}',
-                                    style: tasks[index].isCompleted
-                                        ? TasksTextStyles.completedNoteStyle
-                                        : TasksTextStyles.uncompletedNoteStyle),
-                                trailing: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    tasks[index].date != null
-                                        ? Text(
-                                            '${DateTimeFormat.formatDate(tasks[index].date?.day)}/${DateTimeFormat.formatDate(tasks[index].date?.month)}/${tasks[index].date?.year}',
-                                            style: tasks[index].isCompleted
-                                                ? TasksTextStyles
-                                                    .completedDateTimeStyle
-                                                : TasksTextStyles
-                                                    .uncompletedDateTimeStyle)
-                                        : Text(''),
-                                    tasks[index].time != null
-                                        ? Text(
-                                            '${DateTimeFormat.formatTime(tasks[index].time?.hour)}:${DateTimeFormat.formatTime(tasks[index].time?.minute)}',
-                                            style: tasks[index].isCompleted
-                                                ? TasksTextStyles
-                                                    .completedDateTimeStyle
-                                                : TasksTextStyles
-                                                    .uncompletedDateTimeStyle)
-                                        : Text(''),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
+                          if (_searchController.text.isEmpty) {
+                            return TaskList(index, widget._folderId);
+                          } else if (tasks[index].title.toLowerCase().contains(
+                                  _searchController.text.toLowerCase()) ||
+                              tasks[index].note.toLowerCase().contains(
+                                  _searchController.text.toLowerCase())) {
+                            return TaskList(index, widget._folderId);
+                          } else {
+                            return Container();
+                          }
                         } else {
                           return Container();
                         }
