@@ -41,6 +41,8 @@ Widget _roundedRectButton(String title, List<Color> gradient) {
 }
 
 class LoginScreenWidget extends StatelessWidget {
+  final _nameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -59,7 +61,7 @@ class LoginScreenWidget extends StatelessWidget {
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
-                    LoginScreenInput(30.0, 0.0),
+                    LoginScreenInput(30.0, 0.0, _nameController),
                     Padding(
                         padding: EdgeInsets.only(right: 50.0),
                         child: Row(
@@ -99,8 +101,15 @@ class LoginScreenWidget extends StatelessWidget {
             ),
             GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (BuildContext context) => HomeScreen()));
+                  if (_nameController.text.isNotEmpty) {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            HomeScreen(_nameController.text)));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.redAccent,
+                        content: Text('İsminizi Giriniz!')));
+                  }
                 },
                 child:
                     _roundedRectButton("Kullanmaya Başla", _startingGradients)),

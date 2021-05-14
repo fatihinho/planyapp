@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class LoginScreenInput extends StatelessWidget {
   final double topRight;
   final double bottomRight;
+  final TextEditingController _nameController;
 
-  LoginScreenInput(this.topRight, this.bottomRight);
+  LoginScreenInput(this.topRight, this.bottomRight, this._nameController);
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class LoginScreenInput extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.only(left: 40, right: 20, top: 10, bottom: 10),
             child: TextField(
+              controller: _nameController,
               decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'İsminiz',

@@ -5,6 +5,9 @@ import 'package:planyapp/src/screens/taskfolder_adding_screen.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
+  final String _name;
+  HomeScreen(this._name);
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -48,6 +51,20 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  double _nameFontSize() {
+    if (widget._name.length <= 10) {
+      return 28.0;
+    } else if (widget._name.length > 10 && widget._name.length <= 20) {
+      return 24.0;
+    } else if (widget._name.length > 20 && widget._name.length <= 30) {
+      return 20.0;
+    } else if (widget._name.length > 30 && widget._name.length <= 40) {
+      return 16.0;
+    } else {
+      return 12.0;
+    }
   }
 
   @override
@@ -102,9 +119,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Merhaba Fatih!',
+                              'Merhaba ${widget._name}!',
                               style: TextStyle(
-                                  fontSize: 32.0,
+                                  fontSize: _nameFontSize(),
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
                             ),
