@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       decoration: BoxDecoration(
                           color: Colors.indigo,
                           borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(360),
+                            bottomRight: Radius.circular(360.0),
                           )),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -111,11 +111,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             SizedBox(height: 8.0),
                             _plannedTaskCount > 0
                                 ? Text(
-                                    'Planlanan $_plannedTaskCount tane işin var',
+                                    'Planlanmış $_plannedTaskCount tane notun var',
                                     style: TextStyle(color: Colors.white),
                                   )
                                 : Text(
-                                    'Planlanan hiç işin yok',
+                                    'Planlanmış hiç notun yok',
                                     style: TextStyle(color: Colors.white),
                                   ),
                             SizedBox(height: 48.0),
@@ -179,6 +179,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               content: TextField(
                                                   obscureText: true,
+                                                  cursorColor: Colors.redAccent,
+                                                  decoration: InputDecoration(
+                                                    focusedBorder:
+                                                        UnderlineInputBorder(
+                                                            borderSide: BorderSide(
+                                                                color: Colors
+                                                                    .redAccent)),
+                                                  ),
                                                   controller:
                                                       _passwordController),
                                               actions: [
