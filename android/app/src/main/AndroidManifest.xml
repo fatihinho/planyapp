@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fcinar.planyapp">
    <application
-        android:label="planyapp"
+        android:label="PlanyApp"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

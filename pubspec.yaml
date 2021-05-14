@@ -18,6 +18,19 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.9.0
+  flutter_native_splash: ^1.1.8+4
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/planyapp.png"
+
+flutter_native_splash:
+  color: "#3F51B5"
+  image: "assets/planyapp.png"
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/planyapp.png
