@@ -172,7 +172,7 @@ class _TaskScreenState extends State<TaskScreen> {
                       child: Icon(
                         Icons.add,
                         size: 148.0,
-                        color: Colors.indigo[200],
+                        color: Colors.indigo.shade200,
                       ),
                     ),
               height: screenHeight * 0.75,

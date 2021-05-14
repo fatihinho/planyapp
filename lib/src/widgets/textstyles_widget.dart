@@ -11,7 +11,7 @@ class TasksTextStyles {
   static TextStyle get uncompletedTitleTextStyle => TextStyle(
       fontSize: 18.0,
       fontWeight: FontWeight.bold,
-      color: Colors.blueGrey[800],
+      color: Colors.blueGrey.shade800,
       decoration: TextDecoration.none);
   static TextStyle get completedTitleTextStyle => TextStyle(
       fontSize: 18.0,
@@ -19,7 +19,7 @@ class TasksTextStyles {
       color: Colors.grey,
       decoration: TextDecoration.lineThrough);
   static TextStyle get uncompletedNoteStyle =>
-      TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey[400]);
+      TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey.shade400);
   static TextStyle get completedNoteStyle => TextStyle(
       fontWeight: FontWeight.normal,
       color: Colors.grey,

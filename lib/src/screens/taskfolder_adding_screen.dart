@@ -327,8 +327,8 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(
                                       color: _isPrivate
-                                          ? Colors.grey[200]
-                                          : Colors.green[400],
+                                          ? Colors.grey.shade200
+                                          : Colors.green.shade400,
                                       height: 50.0,
                                       width: screenWidth * 0.4,
                                       child:
@@ -345,8 +345,8 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(
                                       color: _isPrivate
-                                          ? Colors.red[400]
-                                          : Colors.grey[200],
+                                          ? Colors.red.shade400
+                                          : Colors.grey.shade200,
                                       height: 50.0,
                                       width: screenWidth * 0.4,
                                       child: Center(child: Icon(Icons.lock))),

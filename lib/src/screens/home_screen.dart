@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: BoxDecoration(
                         color: Colors.cyan,
                         borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(360))),
+                            bottomLeft: Radius.circular(360.0))),
                   ),
                   Container(
                       height: screenHeight * 0.40,
@@ -172,7 +172,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               title: Row(
                                                 children: [
                                                   Icon(Icons.lock,
-                                                      color: Colors.red[400]),
+                                                      color:
+                                                          Colors.red.shade400),
                                                   SizedBox(width: 2.0),
                                                   Text('Şifre'),
                                                 ],
@@ -332,12 +333,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ? Center(
                                                   child: Icon(
                                                   Icons.lock,
-                                                  color: Colors.red[400],
+                                                  color: Colors.red.shade400,
                                                 ))
                                               : Center(
                                                   child: Icon(
                                                   Icons.lock_open,
-                                                  color: Colors.green[400],
+                                                  color: Colors.green.shade400,
                                                 ))
                                         ],
                                       ),
@@ -352,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Icon(
                             Icons.create_new_folder,
                             size: 148.0,
-                            color: Colors.cyan[200],
+                            color: Colors.cyan.shade200,
                           ),
                         ),
                 ),
