@@ -3,6 +3,7 @@ import 'package:planyapp/src/models/task_model.dart';
 import 'package:planyapp/src/models/taskfolder_model.dart';
 
 class TaskProvider extends ChangeNotifier {
+  String userName = 'Kullanıcı';
   List<Task> tasks = [];
   List<TaskFolder> taskFolders = [];
 

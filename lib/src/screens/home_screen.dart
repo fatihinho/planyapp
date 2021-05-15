@@ -3,12 +3,10 @@ import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/login_screen.dart';
 import 'package:planyapp/src/screens/task_screen.dart';
 import 'package:planyapp/src/screens/taskfolder_adding_screen.dart';
+import 'package:planyapp/src/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String _name;
-  HomeScreen(this._name);
-
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -54,20 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  double _nameFontSize() {
-    if (widget._name.length <= 10) {
-      return 28.0;
-    } else if (widget._name.length > 10 && widget._name.length <= 20) {
-      return 24.0;
-    } else if (widget._name.length > 20 && widget._name.length <= 30) {
-      return 20.0;
-    } else if (widget._name.length > 30 && widget._name.length <= 40) {
-      return 16.0;
-    } else {
-      return 12.0;
-    }
-  }
-
   @override
   void dispose() {
     super.dispose();
@@ -80,6 +64,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
     var taskProvider = Provider.of<TaskProvider>(context);
     var taskFolders = Provider.of<TaskProvider>(context).taskFolders;
+
+    double nameFontSize() {
+      if (taskProvider.userName.length <= 10) {
+        return 28.0;
+      } else if (taskProvider.userName.length > 10 &&
+          taskProvider.userName.length <= 20) {
+        return 24.0;
+      } else if (taskProvider.userName.length > 20 &&
+          taskProvider.userName.length <= 30) {
+        return 20.0;
+      } else if (taskProvider.userName.length > 30 &&
+          taskProvider.userName.length <= 40) {
+        return 16.0;
+      } else {
+        return 12.0;
+      }
+    }
 
     _plannedTaskCount = 0;
     taskFolders.forEach((element) {
@@ -118,9 +119,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Merhaba ${widget._name}!',
+                              'Merhaba ${taskProvider.userName}!',
                               style: TextStyle(
-                                  fontSize: _nameFontSize(),
+                                  fontSize: nameFontSize(),
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -180,10 +181,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ElevatedButton(
                                     child: Text('Çıkış Yap'),
                                     onPressed: () {
-                                      Navigator.of(context).pushReplacement(
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  LoginScreen()));
+                                      signOut().then((_) => {
+                                            Navigator.of(context)
+                                                .pushReplacement(
+                                                    MaterialPageRoute(
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            LoginScreen()))
+                                          });
                                     },
                                   )
                                 ],
