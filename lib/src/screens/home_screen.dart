@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:planyapp/src/providers/task_provider.dart';
+import 'package:planyapp/src/screens/login_screen.dart';
 import 'package:planyapp/src/screens/task_screen.dart';
 import 'package:planyapp/src/screens/taskfolder_adding_screen.dart';
 import 'package:provider/provider.dart';
@@ -76,8 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    var screenHeight = size.height;
-    var screenWidth = size.width;
 
     var taskProvider = Provider.of<TaskProvider>(context);
     var taskFolders = Provider.of<TaskProvider>(context).taskFolders;
@@ -105,8 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             bottomLeft: Radius.circular(360.0))),
                   ),
                   Container(
-                      height: screenHeight * 0.40,
-                      width: screenWidth * 0.80,
+                      height: size.height * 0.4,
+                      width: size.width * 0.8,
                       decoration: BoxDecoration(
                           color: Colors.indigo,
                           borderRadius: BorderRadius.only(
@@ -150,6 +149,57 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       )),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                title: Row(
+                                  children: [
+                                    Icon(Icons.warning,
+                                        color: Colors.red.shade400),
+                                    SizedBox(width: 2.0),
+                                    Text('Uyarı'),
+                                  ],
+                                ),
+                                content: Text(
+                                  'Bu işlemden sonra tüm veriler silinecektir.\n\nÇıkış yapmak istiyor musun?',
+                                  style: TextStyle(
+                                      color: Colors.red.shade400,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                actions: [
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.redAccent),
+                                    child: Text('İptal'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  ElevatedButton(
+                                    child: Text('Çıkış Yap'),
+                                    onPressed: () {
+                                      Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  LoginScreen()));
+                                    },
+                                  )
+                                ],
+                              ));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Container(
+                        margin: EdgeInsets.only(top: size.height * 0.1),
+                        child: Align(
+                            child: Icon(Icons.logout,
+                                color: Colors.white, size: 28.0),
+                            alignment: Alignment.topRight),
+                      ),
+                    ),
+                  )
                 ]),
               ),
               Padding(
@@ -302,14 +352,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                               )
                                             ],
                                           ));
-                                },
-                                onDoubleTap: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content:
-                                          Text('Id: ${taskFolders[index].id}'),
-                                    ),
-                                  );
                                 },
                                 child: Card(
                                   elevation: 5,

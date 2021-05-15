@@ -70,7 +70,7 @@ class LoginScreenWidget extends StatelessWidget {
                                 child: Padding(
                               padding: EdgeInsets.only(top: 40.0),
                               child: Text(
-                                'Devam etmek için isminizi girin...',
+                                'Devam etmek için isminizi giriniz...',
                                 textAlign: TextAlign.end,
                                 style: TextStyle(
                                     color: Colors.grey, fontSize: 12.0),
