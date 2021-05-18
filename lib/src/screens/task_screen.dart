@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:planyapp/src/models/task_model.dart';
-import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/task_adding_screen.dart';
+import 'package:planyapp/src/services/firestore_service.dart';
+import 'package:planyapp/src/utils/colors_util.dart';
 import 'package:planyapp/src/widgets/task_list_widget.dart';
-import 'package:provider/provider.dart';
 
 class TaskScreen extends StatefulWidget {
   final int _folderId;
   final String _title;
-  final Color _color;
+  final String _color;
   TaskScreen(this._folderId, this._title, this._color);
 
   @override
@@ -84,16 +83,12 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    var screenHeight = size.height;
-    var screenWidth = size.width;
-
-    List<Task> tasks = Provider.of<TaskProvider>(context).tasks;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: widget._color,
+        backgroundColor: ColorsUtil.colorNameToColor(widget._color),
         actions: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -110,9 +105,9 @@ class _TaskScreenState extends State<TaskScreen> {
       body: Stack(
         children: [
           Container(
-            width: screenWidth,
-            height: screenHeight,
-            color: widget._color,
+            width: size.width,
+            height: size.height,
+            color: ColorsUtil.colorNameToColor(widget._color),
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -147,35 +142,57 @@ class _TaskScreenState extends State<TaskScreen> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30.0),
                       topRight: Radius.circular(30.0))),
-              child: tasks
-                      .where((element) => element.folderId == widget._folderId)
-                      .isNotEmpty
-                  ? ListView.builder(
-                      itemCount: tasks.length,
-                      itemBuilder: (context, index) {
-                        if (tasks[index].folderId == widget._folderId) {
-                          if (_searchController.text.isEmpty) {
-                            return TaskList(index, widget._folderId);
-                          } else if (tasks[index].title.toLowerCase().contains(
-                                  _searchController.text.toLowerCase()) ||
-                              tasks[index].note.toLowerCase().contains(
-                                  _searchController.text.toLowerCase())) {
-                            return TaskList(index, widget._folderId);
-                          } else {
-                            return Container();
-                          }
-                        } else {
-                          return Container();
-                        }
-                      })
-                  : Center(
-                      child: Icon(
-                        Icons.add,
-                        size: 148.0,
-                        color: Colors.indigo.shade200,
-                      ),
-                    ),
-              height: screenHeight * 0.75,
+              child: FutureBuilder(
+                  future: getTasks(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Icon(Icons.error_outline));
+                    } else {
+                      if (snapshot.data
+                          .where((element) =>
+                              element.get('folderId') == widget._folderId)
+                          .isNotEmpty) {
+                        return ListView.builder(
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (context, index) {
+                              if (snapshot.data[index].get('folderId') ==
+                                  widget._folderId) {
+                                if (_searchController.text.isEmpty) {
+                                  return TaskList(
+                                      index, widget._folderId, snapshot.data);
+                                } else if (snapshot.data[index]
+                                        .get('title')
+                                        .toLowerCase()
+                                        .contains(_searchController.text
+                                            .toLowerCase()) ||
+                                    snapshot.data[index]
+                                        .get('note')
+                                        .toLowerCase()
+                                        .contains(_searchController.text
+                                            .toLowerCase())) {
+                                  return TaskList(
+                                      index, widget._folderId, snapshot.data);
+                                } else {
+                                  return Container();
+                                }
+                              } else {
+                                return Container();
+                              }
+                            });
+                      } else {
+                        return Center(
+                          child: Icon(
+                            Icons.add,
+                            size: 148.0,
+                            color: Colors.indigo.shade200,
+                          ),
+                        );
+                      }
+                    }
+                  }),
+              height: size.height * 0.75,
             ),
           )
         ],

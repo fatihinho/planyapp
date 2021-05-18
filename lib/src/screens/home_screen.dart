@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/login_screen.dart';
 import 'package:planyapp/src/screens/task_screen.dart';
 import 'package:planyapp/src/screens/taskfolder_adding_screen.dart';
 import 'package:planyapp/src/services/auth_service.dart';
-import 'package:provider/provider.dart';
+import 'package:planyapp/src/services/firestore_service.dart';
+import 'package:planyapp/src/utils/colors_util.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -12,11 +13,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _plannedTaskCount = 0;
+  String _userName = '';
+  num _plannedTaskCount = 0;
+  List<QueryDocumentSnapshot> _taskFolders = [];
 
   var _passwordController = TextEditingController();
 
-  Route _navigateToTasks(int folderId, String title, Color color) {
+  Route _navigateToTasks(int folderId, String title, String color) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
           TaskScreen(folderId, title, color),
@@ -52,6 +55,44 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  double _getNameFontSize() {
+    if (_userName.length <= 10) {
+      return 28.0;
+    } else if (_userName.length > 10 && _userName.length <= 20) {
+      return 24.0;
+    } else if (_userName.length > 20 && _userName.length <= 30) {
+      return 20.0;
+    } else if (_userName.length > 30 && _userName.length <= 40) {
+      return 16.0;
+    } else {
+      return 12.0;
+    }
+  }
+
+  void _initUserName() async {
+    var userName = await getUserName();
+    setState(() {
+      _userName = userName;
+    });
+  }
+
+  void _initTaskFolders() async {
+    var taskFolders = await getTaskFolders();
+    setState(() {
+      _taskFolders = taskFolders;
+    });
+  }
+
+  void _initPlannedTaskCount() {
+    _initTaskFolders();
+    setState(() {
+      _plannedTaskCount = 0;
+      _taskFolders.forEach((element) {
+        _plannedTaskCount += element.get('taskCount');
+      });
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -60,32 +101,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
-    var taskProvider = Provider.of<TaskProvider>(context);
-    var taskFolders = Provider.of<TaskProvider>(context).taskFolders;
-
-    double nameFontSize() {
-      if (taskProvider.userName.length <= 10) {
-        return 28.0;
-      } else if (taskProvider.userName.length > 10 &&
-          taskProvider.userName.length <= 20) {
-        return 24.0;
-      } else if (taskProvider.userName.length > 20 &&
-          taskProvider.userName.length <= 30) {
-        return 20.0;
-      } else if (taskProvider.userName.length > 30 &&
-          taskProvider.userName.length <= 40) {
-        return 16.0;
-      } else {
-        return 12.0;
-      }
-    }
-
-    _plannedTaskCount = 0;
-    taskFolders.forEach((element) {
-      _plannedTaskCount += element.taskCount;
-    });
+    _initUserName();
+    _initPlannedTaskCount();
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -119,9 +138,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Merhaba ${taskProvider.userName}!',
+                              'Merhaba $_userName',
                               style: TextStyle(
-                                  fontSize: nameFontSize(),
+                                  fontSize: _getNameFontSize(),
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
                             ),
@@ -218,210 +237,245 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                       shape: BoxShape.rectangle, color: Colors.white),
-                  child: taskFolders.isNotEmpty
-                      ? GridView.builder(
-                          padding: const EdgeInsets.all(0.0),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            childAspectRatio: 1.5,
-                            crossAxisCount: 2,
-                          ),
-                          itemCount: taskFolders.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
-                                onTap: () {
-                                  if (!taskFolders[index].isPrivate) {
-                                    Navigator.of(context).push(_navigateToTasks(
-                                        taskFolders[index].id,
-                                        '${taskFolders[index].name}',
-                                        taskFolders[index].iconColor));
-                                  } else {
-                                    showDialog(
-                                        context: context,
-                                        builder: (_) => AlertDialog(
-                                              title: Row(
-                                                children: [
-                                                  Icon(Icons.lock,
-                                                      color:
-                                                          Colors.red.shade400),
-                                                  SizedBox(width: 2.0),
-                                                  Text('Şifre'),
-                                                ],
-                                              ),
-                                              content: TextField(
-                                                  obscureText: true,
-                                                  cursorColor: Colors.redAccent,
-                                                  decoration: InputDecoration(
-                                                    focusedBorder:
-                                                        UnderlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                                color: Colors
-                                                                    .redAccent)),
+                  child: FutureBuilder(
+                      future: getTaskFolders(),
+                      builder: (context, AsyncSnapshot snapshot) {
+                        if (!snapshot.hasData) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(child: Icon(Icons.error_outline));
+                        } else {
+                          if (snapshot.data.isNotEmpty) {
+                            return GridView.builder(
+                              padding: const EdgeInsets.all(0.0),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                childAspectRatio: 1.5,
+                                crossAxisCount: 2,
+                              ),
+                              itemCount: snapshot.data.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      if (!snapshot.data[index]
+                                          .get('isPrivate')) {
+                                        Navigator.of(context).push(_navigateToTasks(
+                                            snapshot.data[index].get('id'),
+                                            '${snapshot.data[index].get('name')}',
+                                            snapshot.data[index]
+                                                .get('iconColor')));
+                                      } else {
+                                        showDialog(
+                                            context: context,
+                                            builder: (_) => AlertDialog(
+                                                  title: Row(
+                                                    children: [
+                                                      Icon(Icons.lock,
+                                                          color: Colors
+                                                              .red.shade400),
+                                                      SizedBox(width: 2.0),
+                                                      Text('Şifre'),
+                                                    ],
                                                   ),
-                                                  controller:
-                                                      _passwordController),
-                                              actions: [
-                                                ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                          primary:
-                                                              Colors.redAccent),
-                                                  child: Text('İptal'),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                    _passwordController.clear();
-                                                  },
-                                                ),
-                                                ElevatedButton(
-                                                  child: Text('Onayla'),
-                                                  onPressed: () {
-                                                    if (_passwordController
-                                                        .text.isNotEmpty) {
-                                                      if (_passwordController
-                                                              .text ==
-                                                          taskFolders[index]
-                                                              .password) {
-                                                        Navigator.of(context)
-                                                            .pushReplacement(
-                                                                _navigateToTasks(
-                                                                    taskFolders[
-                                                                            index]
-                                                                        .id,
-                                                                    '${taskFolders[index].name}',
-                                                                    taskFolders[
-                                                                            index]
-                                                                        .iconColor));
-                                                        _passwordController
-                                                            .clear();
-                                                      } else {
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(SnackBar(
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .redAccent,
-                                                                content: Text(
-                                                                    'Geçersiz Şifre!')));
-                                                        _passwordController
-                                                            .clear();
-                                                      }
-                                                    } else {
-                                                      ScaffoldMessenger
-                                                              .of(context)
-                                                          .showSnackBar(SnackBar(
-                                                              backgroundColor:
-                                                                  Colors
-                                                                      .orangeAccent,
-                                                              content: Text(
-                                                                  'Şifre Giriniz!')));
-                                                    }
-                                                  },
-                                                )
-                                              ],
-                                            ));
-                                  }
-                                },
-                                onLongPress: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (_) => AlertDialog(
-                                            title: Text(
-                                                "Klasör'ü silmek istediğinden emin misin?"),
-                                            actions: [
-                                              ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                    primary: Colors.redAccent),
-                                                child: Text('İptal'),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                              ElevatedButton(
-                                                child: Text('Sil'),
-                                                onPressed: () {
-                                                  taskProvider
-                                                      .deleteTaskFolder(index);
-                                                  Navigator.of(context).pop();
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      backgroundColor:
+                                                  content: TextField(
+                                                      obscureText: true,
+                                                      cursorColor:
                                                           Colors.redAccent,
-                                                      content: Text(
-                                                          'Klasör Silindi'),
+                                                      decoration:
+                                                          InputDecoration(
+                                                        focusedBorder:
+                                                            UnderlineInputBorder(
+                                                                borderSide: BorderSide(
+                                                                    color: Colors
+                                                                        .redAccent)),
+                                                      ),
+                                                      controller:
+                                                          _passwordController),
+                                                  actions: [
+                                                    ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                              primary: Colors
+                                                                  .redAccent),
+                                                      child: Text('İptal'),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        _passwordController
+                                                            .clear();
+                                                      },
                                                     ),
-                                                  );
-                                                },
-                                              )
-                                            ],
-                                          ));
-                                },
-                                child: Card(
-                                  elevation: 5,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Text(
-                                        '${taskFolders[index].name}',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Row(
+                                                    ElevatedButton(
+                                                      child: Text('Onayla'),
+                                                      onPressed: () {
+                                                        if (_passwordController
+                                                            .text.isNotEmpty) {
+                                                          if (_passwordController
+                                                                  .text ==
+                                                              snapshot
+                                                                  .data[index]
+                                                                  .get(
+                                                                      'password')) {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pushReplacement(_navigateToTasks(
+                                                                    snapshot
+                                                                        .data[
+                                                                            index]
+                                                                        .get(
+                                                                            'id'),
+                                                                    '${snapshot.data[index].get('name')}',
+                                                                    snapshot
+                                                                        .data[
+                                                                            index]
+                                                                        .get(
+                                                                            'iconColor')));
+                                                            _passwordController
+                                                                .clear();
+                                                          } else {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(SnackBar(
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .redAccent,
+                                                                    content: Text(
+                                                                        'Geçersiz Şifre!')));
+                                                            _passwordController
+                                                                .clear();
+                                                          }
+                                                        } else {
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(SnackBar(
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .orangeAccent,
+                                                                  content: Text(
+                                                                      'Şifre Giriniz!')));
+                                                        }
+                                                      },
+                                                    )
+                                                  ],
+                                                ));
+                                      }
+                                    },
+                                    onLongPress: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (_) => AlertDialog(
+                                                title: Text(
+                                                    "Klasör'ü silmek istediğinden emin misin?"),
+                                                actions: [
+                                                  ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                            primary: Colors
+                                                                .redAccent),
+                                                    child: Text('İptal'),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop(false);
+                                                    },
+                                                  ),
+                                                  ElevatedButton(
+                                                    child: Text('Sil'),
+                                                    onPressed: () {
+                                                      deleteTaskFolder(snapshot
+                                                          .data[index].id);
+                                                      Navigator.of(context)
+                                                          .pop(true);
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          backgroundColor:
+                                                              Colors.redAccent,
+                                                          content: Text(
+                                                              'Klasör Silindi'),
+                                                        ),
+                                                      );
+                                                    },
+                                                  )
+                                                ],
+                                              ));
+                                    },
+                                    child: Card(
+                                      elevation: 5,
+                                      child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
+                                            MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          Center(
-                                            child: Icon(
-                                              Icons.folder,
-                                              color:
-                                                  taskFolders[index].iconColor,
-                                              size: 28.0,
+                                          Text(
+                                            '${snapshot.data[index].get('name')}',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          Center(
-                                            child: Text(
-                                              '${taskFolders[index].taskCount}',
-                                              style: TextStyle(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.indigo),
-                                            ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              Center(
+                                                child: Icon(
+                                                  Icons.folder,
+                                                  color: ColorsUtil
+                                                      .colorNameToColor(snapshot
+                                                          .data[index]
+                                                          .get('iconColor')),
+                                                  size: 28.0,
+                                                ),
+                                              ),
+                                              Center(
+                                                child: Text(
+                                                  '${snapshot.data[index].get('taskCount')}',
+                                                  style: TextStyle(
+                                                      fontSize: 18.0,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.indigo),
+                                                ),
+                                              ),
+                                              snapshot.data[index]
+                                                      .get('isPrivate')
+                                                  ? Center(
+                                                      child: Icon(
+                                                      Icons.lock,
+                                                      color:
+                                                          Colors.red.shade400,
+                                                    ))
+                                                  : Center(
+                                                      child: Icon(
+                                                      Icons.lock_open,
+                                                      color:
+                                                          Colors.green.shade400,
+                                                    ))
+                                            ],
                                           ),
-                                          taskFolders[index].isPrivate
-                                              ? Center(
-                                                  child: Icon(
-                                                  Icons.lock,
-                                                  color: Colors.red.shade400,
-                                                ))
-                                              : Center(
-                                                  child: Icon(
-                                                  Icons.lock_open,
-                                                  color: Colors.green.shade400,
-                                                ))
                                         ],
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
+                                );
+                              },
+                            );
+                          } else {
+                            return Center(
+                              child: Icon(
+                                Icons.create_new_folder,
+                                size: 148.0,
+                                color: Colors.cyan.shade200,
                               ),
                             );
-                          },
-                        )
-                      : Center(
-                          child: Icon(
-                            Icons.create_new_folder,
-                            size: 148.0,
-                            color: Colors.cyan.shade200,
-                          ),
-                        ),
+                          }
+                        }
+                      }),
                 ),
-              ),
+              )
             ],
           ),
         ));

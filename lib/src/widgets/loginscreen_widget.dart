@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/home_screen.dart';
 import 'package:planyapp/src/services/auth_service.dart';
+import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/widgets/loginscreen_input_widget.dart';
-import 'package:provider/provider.dart';
 
 const List<Color> _startingGradients = [
   Color(0xFF0EDED2),
@@ -49,8 +48,6 @@ class LoginScreenWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
-    var taskProvider = Provider.of<TaskProvider>(context);
 
     return Column(
       children: [
@@ -110,7 +107,7 @@ class LoginScreenWidget extends StatelessWidget {
                     signInAnonymous().then((value) => {
                           if (value)
                             {
-                              taskProvider.userName = _nameController.text,
+                              setUserName(_nameController.text),
                               Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:planyapp/src/providers/task_provider.dart';
+import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
-import 'package:provider/provider.dart';
 
 class TaskAddingScreen extends StatefulWidget {
   final int _folderId;
@@ -62,11 +61,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    var screenHeight = size.height;
-    var screenWidth = size.width;
-
-    TaskProvider taskProvider = Provider.of<TaskProvider>(context);
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
         appBar: AppBar(
@@ -76,8 +71,8 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
         body: Stack(
           children: [
             Container(
-              width: screenWidth,
-              height: screenHeight,
+              width: size.width,
+              height: size.height,
               color: Colors.cyan,
               child: SingleChildScrollView(
                 child: Padding(
@@ -155,7 +150,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                             ),
                             _date != null
                                 ? Text(
-                                    '${DateTimeFormat.formatDate(_date?.day)}/${DateTimeFormat.formatDate(_date?.month)}/${_date?.year}',
+                                    '${DateTimeFormat.formatDate(_date?.day.toString())}/${DateTimeFormat.formatDate(_date?.month.toString())}/${_date?.year}',
                                     style: TextStyle(
                                         fontSize: 18.0,
                                         color: Colors.brown,
@@ -202,7 +197,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                             ),
                             _time != null
                                 ? Text(
-                                    '${DateTimeFormat.formatTime(_time?.hour)}:${DateTimeFormat.formatTime(_time?.minute)}',
+                                    '${DateTimeFormat.formatTime(_time?.hour.toString())}:${DateTimeFormat.formatTime(_time?.minute.toString())}',
                                     style: TextStyle(
                                         fontSize: 18.0,
                                         color: Colors.brown,
@@ -218,16 +213,20 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                         SizedBox(height: 48.0),
                         Container(
                             height: 50.0,
-                            width: screenWidth,
+                            width: size.width,
                             child: ElevatedButton(
                                 onPressed: () {
                                   if (_titleController.text.isNotEmpty &&
                                       _noteController.text.isNotEmpty) {
-                                    taskProvider.addTask(
+                                    addTask(
+                                        UniqueKey().hashCode,
                                         _titleController.text,
                                         _noteController.text,
-                                        _date,
-                                        _time,
+                                        _date?.day.toString(),
+                                        _date?.month.toString(),
+                                        _date?.year.toString(),
+                                        _time?.hour.toString(),
+                                        _time?.minute.toString(),
                                         false,
                                         widget._folderId);
                                     Navigator.of(context).pop();
@@ -246,7 +245,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                       ],
                     ),
                   ),
-                  height: screenHeight * 0.75,
+                  height: size.height * 0.75,
                 ),
               ),
             )

@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
+String get userUID => _auth.currentUser!.uid;
+
 Future<bool> signInAnonymous() async {
   try {
     UserCredential userCredential =
@@ -23,8 +25,6 @@ bool hasCurrentUser() {
     return false;
   }
 }
-
-String getUID() => _auth.currentUser!.uid;
 
 Future<void> signOut() async {
   await FirebaseAuth.instance.signOut();

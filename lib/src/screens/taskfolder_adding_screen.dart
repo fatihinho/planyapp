@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:planyapp/src/providers/task_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:planyapp/src/services/firestore_service.dart';
+import 'package:planyapp/src/utils/colors_util.dart';
 
 class TaskFolderAddingScreen extends StatefulWidget {
   @override
@@ -9,6 +9,7 @@ class TaskFolderAddingScreen extends StatefulWidget {
 
 class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
   bool _isPrivate = false;
+  int _selectedBoxIndex = 0;
 
   var _passwordController = TextEditingController();
   var _folderNameController = TextEditingController();
@@ -17,21 +18,6 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
     return BoxDecoration(
         color: color, border: Border.all(color: Colors.cyanAccent, width: 4.0));
   }
-
-  int _selectedBoxIndex = 0;
-
-  List<Color> _boxColors = [
-    Colors.blue,
-    Colors.yellow,
-    Colors.green,
-    Colors.red,
-    Colors.orange,
-    Colors.purple,
-    Colors.pink,
-    Colors.lime,
-    Colors.teal,
-    Colors.brown
-  ];
 
   @override
   void dispose() {
@@ -42,11 +28,7 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    var screenHeight = size.height;
-    var screenWidth = size.width;
-
-    TaskProvider taskProvider = Provider.of<TaskProvider>(context);
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
         appBar: AppBar(
@@ -56,8 +38,8 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
         body: Stack(
           children: [
             Container(
-              width: screenWidth,
-              height: screenHeight,
+              width: size.width,
+              height: size.height,
               color: Colors.indigo,
               child: SingleChildScrollView(
                 child: Padding(
@@ -117,13 +99,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                     padding: const EdgeInsets.all(4.0),
                                     child: Container(
                                         color: _selectedBoxIndex != 0
-                                            ? _boxColors[0]
+                                            ? ColorsUtil.boxColors[0]
                                             : null,
                                         height: 30.0,
-                                        width: screenWidth * 0.15,
+                                        width: size.width * 0.15,
                                         decoration: _selectedBoxIndex == 0
                                             ? _selectedColorBoxDecoration(
-                                                _boxColors[0])
+                                                ColorsUtil.boxColors[0])
                                             : null),
                                   ),
                                 ),
@@ -137,13 +119,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                     padding: const EdgeInsets.all(4.0),
                                     child: Container(
                                         color: _selectedBoxIndex != 1
-                                            ? _boxColors[1]
+                                            ? ColorsUtil.boxColors[1]
                                             : null,
                                         height: 30.0,
-                                        width: screenWidth * 0.15,
+                                        width: size.width * 0.15,
                                         decoration: _selectedBoxIndex == 1
                                             ? _selectedColorBoxDecoration(
-                                                _boxColors[1])
+                                                ColorsUtil.boxColors[1])
                                             : null),
                                   ),
                                 ),
@@ -157,13 +139,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                     padding: const EdgeInsets.all(4.0),
                                     child: Container(
                                         color: _selectedBoxIndex != 2
-                                            ? _boxColors[2]
+                                            ? ColorsUtil.boxColors[2]
                                             : null,
                                         height: 30.0,
-                                        width: screenWidth * 0.15,
+                                        width: size.width * 0.15,
                                         decoration: _selectedBoxIndex == 2
                                             ? _selectedColorBoxDecoration(
-                                                _boxColors[2])
+                                                ColorsUtil.boxColors[2])
                                             : null),
                                   ),
                                 ),
@@ -177,13 +159,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                     padding: const EdgeInsets.all(4.0),
                                     child: Container(
                                         color: _selectedBoxIndex != 3
-                                            ? _boxColors[3]
+                                            ? ColorsUtil.boxColors[3]
                                             : null,
                                         height: 30.0,
-                                        width: screenWidth * 0.15,
+                                        width: size.width * 0.15,
                                         decoration: _selectedBoxIndex == 3
                                             ? _selectedColorBoxDecoration(
-                                                _boxColors[3])
+                                                ColorsUtil.boxColors[3])
                                             : null),
                                   ),
                                 ),
@@ -197,13 +179,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                     padding: const EdgeInsets.all(4.0),
                                     child: Container(
                                         color: _selectedBoxIndex != 4
-                                            ? _boxColors[4]
+                                            ? ColorsUtil.boxColors[4]
                                             : null,
                                         height: 30.0,
-                                        width: screenWidth * 0.15,
+                                        width: size.width * 0.15,
                                         decoration: _selectedBoxIndex == 4
                                             ? _selectedColorBoxDecoration(
-                                                _boxColors[4])
+                                                ColorsUtil.boxColors[4])
                                             : null),
                                   ),
                                 ),
@@ -221,13 +203,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                     padding: const EdgeInsets.all(4.0),
                                     child: Container(
                                         color: _selectedBoxIndex != 5
-                                            ? _boxColors[5]
+                                            ? ColorsUtil.boxColors[5]
                                             : null,
                                         height: 30.0,
-                                        width: screenWidth * 0.15,
+                                        width: size.width * 0.15,
                                         decoration: _selectedBoxIndex == 5
                                             ? _selectedColorBoxDecoration(
-                                                _boxColors[5])
+                                                ColorsUtil.boxColors[5])
                                             : null),
                                   ),
                                 ),
@@ -241,13 +223,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                     padding: const EdgeInsets.all(4.0),
                                     child: Container(
                                         color: _selectedBoxIndex != 6
-                                            ? _boxColors[6]
+                                            ? ColorsUtil.boxColors[6]
                                             : null,
                                         height: 30.0,
-                                        width: screenWidth * 0.15,
+                                        width: size.width * 0.15,
                                         decoration: _selectedBoxIndex == 6
                                             ? _selectedColorBoxDecoration(
-                                                _boxColors[6])
+                                                ColorsUtil.boxColors[6])
                                             : null),
                                   ),
                                 ),
@@ -261,13 +243,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                     padding: const EdgeInsets.all(4.0),
                                     child: Container(
                                         color: _selectedBoxIndex != 7
-                                            ? _boxColors[7]
+                                            ? ColorsUtil.boxColors[7]
                                             : null,
                                         height: 30.0,
-                                        width: screenWidth * 0.15,
+                                        width: size.width * 0.15,
                                         decoration: _selectedBoxIndex == 7
                                             ? _selectedColorBoxDecoration(
-                                                _boxColors[7])
+                                                ColorsUtil.boxColors[7])
                                             : null),
                                   ),
                                 ),
@@ -281,13 +263,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                     padding: const EdgeInsets.all(4.0),
                                     child: Container(
                                         color: _selectedBoxIndex != 8
-                                            ? _boxColors[8]
+                                            ? ColorsUtil.boxColors[8]
                                             : null,
                                         height: 30.0,
-                                        width: screenWidth * 0.15,
+                                        width: size.width * 0.15,
                                         decoration: _selectedBoxIndex == 8
                                             ? _selectedColorBoxDecoration(
-                                                _boxColors[8])
+                                                ColorsUtil.boxColors[8])
                                             : null),
                                   ),
                                 ),
@@ -301,13 +283,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                     padding: const EdgeInsets.all(4.0),
                                     child: Container(
                                         color: _selectedBoxIndex != 9
-                                            ? _boxColors[9]
+                                            ? ColorsUtil.boxColors[9]
                                             : null,
                                         height: 30.0,
-                                        width: screenWidth * 0.15,
+                                        width: size.width * 0.15,
                                         decoration: _selectedBoxIndex == 9
                                             ? _selectedColorBoxDecoration(
-                                                _boxColors[9])
+                                                ColorsUtil.boxColors[9])
                                             : null),
                                   ),
                                 ),
@@ -330,7 +312,7 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                           ? Colors.grey.shade200
                                           : Colors.green.shade400,
                                       height: 50.0,
-                                      width: screenWidth * 0.4,
+                                      width: size.width * 0.4,
                                       child:
                                           Center(child: Icon(Icons.lock_open))),
                                 ),
@@ -348,7 +330,7 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                           ? Colors.red.shade400
                                           : Colors.grey.shade200,
                                       height: 50.0,
-                                      width: screenWidth * 0.4,
+                                      width: size.width * 0.4,
                                       child: Center(child: Icon(Icons.lock))),
                                 ),
                               )
@@ -366,7 +348,7 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                         SizedBox(height: 48.0),
                         Container(
                             height: 50.0,
-                            width: screenWidth,
+                            width: size.width,
                             child: ElevatedButton(
                               onPressed: () {
                                 if (_folderNameController.text.isNotEmpty) {
@@ -374,10 +356,11 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                       (_isPrivate &&
                                           _passwordController
                                               .text.isNotEmpty)) {
-                                    taskProvider.addTaskFolder(
+                                    addTaskFolder(
                                       UniqueKey().hashCode,
                                       _folderNameController.text,
-                                      _boxColors[_selectedBoxIndex],
+                                      ColorsUtil.colorValueToName(ColorsUtil
+                                          .boxColors[_selectedBoxIndex].value),
                                       _isPrivate,
                                       _passwordController.text,
                                       0,
@@ -405,7 +388,7 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                       ],
                     ),
                   ),
-                  height: screenHeight * 0.75,
+                  height: size.height * 0.75,
                 ),
               ),
             )
