@@ -10,17 +10,15 @@ Future<void> setUserName(String userName) async {
 
 Future<String> getUserName() async {
   var user = await _users.doc(userUID).get();
-  return user.get('userName');
+  return user.get('userName') as String;
 }
 
-Future<List<QueryDocumentSnapshot>> getTasks() async {
-  var tasks = await _users.doc(userUID).collection('task').get();
-  return tasks.docs;
+Stream<QuerySnapshot> getTasks() {
+  return _users.doc(userUID).collection('task').snapshots();
 }
 
-Future<List<QueryDocumentSnapshot>> getTaskFolders() async {
-  var taskFolders = await _users.doc(userUID).collection('taskFolder').get();
-  return taskFolders.docs;
+Stream<QuerySnapshot> getTaskFolders() {
+  return _users.doc(userUID).collection('taskFolder').snapshots();
 }
 
 Future<int> getCurrentTaskCount(int folderId) async {
@@ -118,7 +116,6 @@ Future<void> deleteTaskFolder(String id) async {
 
 Future<bool> isTaskCompleted(String id) async {
   var task = await _users.doc(userUID).collection('task').doc(id).get();
-
   return task.get('isCompleted');
 }
 

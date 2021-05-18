@@ -7,7 +7,7 @@ import 'package:planyapp/src/widgets/textstyles_widget.dart';
 class TaskList extends StatefulWidget {
   final int _index;
   final int _folderId;
-  final List<QueryDocumentSnapshot> _tasks;
+  final List<DocumentSnapshot> _tasks;
   TaskList(this._index, this._folderId, this._tasks);
 
   @override
@@ -66,7 +66,7 @@ class _TaskListState extends State<TaskList> {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key(widget._tasks[widget._index].toString()),
+      key: Key(widget._tasks[widget._index].id),
       background: _stackBehindDismiss(),
       direction: DismissDirection.endToStart,
       confirmDismiss: (direction) => promptUser(direction),

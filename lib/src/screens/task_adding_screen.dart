@@ -229,7 +229,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                         _time?.minute.toString(),
                                         false,
                                         widget._folderId);
-                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop(true);
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(

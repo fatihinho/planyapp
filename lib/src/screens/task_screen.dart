@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:planyapp/src/screens/task_adding_screen.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
@@ -142,38 +143,39 @@ class _TaskScreenState extends State<TaskScreen> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30.0),
                       topRight: Radius.circular(30.0))),
-              child: FutureBuilder(
-                  future: getTasks(),
+              child: StreamBuilder(
+                  stream: getTasks(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (!snapshot.hasData) {
                       return Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
                       return Center(child: Icon(Icons.error_outline));
                     } else {
-                      if (snapshot.data
+                      final List<DocumentSnapshot> tasks = snapshot.data.docs;
+                      if (tasks
                           .where((element) =>
                               element.get('folderId') == widget._folderId)
                           .isNotEmpty) {
                         return ListView.builder(
-                            itemCount: snapshot.data.length,
+                            itemCount: tasks.length,
                             itemBuilder: (context, index) {
-                              if (snapshot.data[index].get('folderId') ==
+                              if (tasks[index].get('folderId') ==
                                   widget._folderId) {
                                 if (_searchController.text.isEmpty) {
                                   return TaskList(
-                                      index, widget._folderId, snapshot.data);
-                                } else if (snapshot.data[index]
+                                      index, widget._folderId, tasks);
+                                } else if (tasks[index]
                                         .get('title')
                                         .toLowerCase()
                                         .contains(_searchController.text
                                             .toLowerCase()) ||
-                                    snapshot.data[index]
+                                    tasks[index]
                                         .get('note')
                                         .toLowerCase()
                                         .contains(_searchController.text
                                             .toLowerCase())) {
                                   return TaskList(
-                                      index, widget._folderId, snapshot.data);
+                                      index, widget._folderId, tasks);
                                 } else {
                                   return Container();
                                 }

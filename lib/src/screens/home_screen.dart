@@ -76,14 +76,15 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _initTaskFolders() async {
-    var taskFolders = await getTaskFolders();
-    setState(() {
-      _taskFolders = taskFolders;
+  void _initTaskFolders() {
+    getTaskFolders().listen((event) {
+      setState(() {
+        _taskFolders = event.docs;
+      });
     });
   }
 
-  void _initPlannedTaskCount() {
+  void _sumPlannedTaskCount() {
     _initTaskFolders();
     setState(() {
       _plannedTaskCount = 0;
@@ -91,6 +92,12 @@ class _HomeScreenState extends State<HomeScreen> {
         _plannedTaskCount += element.get('taskCount');
       });
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initUserName();
   }
 
   @override
@@ -103,8 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    _initUserName();
-    _initPlannedTaskCount();
+    _sumPlannedTaskCount();
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -138,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Merhaba $_userName',
+                              'Merhaba $_userName!',
                               style: TextStyle(
                                   fontSize: _getNameFontSize(),
                                   color: Colors.white,
@@ -194,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         primary: Colors.redAccent),
                                     child: Text('İptal'),
                                     onPressed: () {
-                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop(false);
                                     },
                                   ),
                                   ElevatedButton(
@@ -237,15 +243,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                       shape: BoxShape.rectangle, color: Colors.white),
-                  child: FutureBuilder(
-                      future: getTaskFolders(),
+                  child: StreamBuilder(
+                      stream: getTaskFolders(),
                       builder: (context, AsyncSnapshot snapshot) {
                         if (!snapshot.hasData) {
                           return Center(child: CircularProgressIndicator());
                         } else if (snapshot.hasError) {
                           return Center(child: Icon(Icons.error_outline));
                         } else {
-                          if (snapshot.data.isNotEmpty) {
+                          final List<DocumentSnapshot> taskFolders =
+                              snapshot.data.docs;
+                          if (taskFolders.isNotEmpty) {
                             return GridView.builder(
                               padding: const EdgeInsets.all(0.0),
                               gridDelegate:
@@ -253,18 +261,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                 childAspectRatio: 1.5,
                                 crossAxisCount: 2,
                               ),
-                              itemCount: snapshot.data.length,
+                              itemCount: taskFolders.length,
                               itemBuilder: (context, index) {
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: InkWell(
                                     onTap: () {
-                                      if (!snapshot.data[index]
+                                      if (!taskFolders[index]
                                           .get('isPrivate')) {
                                         Navigator.of(context).push(_navigateToTasks(
-                                            snapshot.data[index].get('id'),
-                                            '${snapshot.data[index].get('name')}',
-                                            snapshot.data[index]
+                                            taskFolders[index].get('id'),
+                                            '${taskFolders[index].get('name')}',
+                                            taskFolders[index]
                                                 .get('iconColor')));
                                       } else {
                                         showDialog(
@@ -314,21 +322,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             .text.isNotEmpty) {
                                                           if (_passwordController
                                                                   .text ==
-                                                              snapshot
-                                                                  .data[index]
+                                                              taskFolders[index]
                                                                   .get(
                                                                       'password')) {
                                                             Navigator.of(
                                                                     context)
                                                                 .pushReplacement(_navigateToTasks(
-                                                                    snapshot
-                                                                        .data[
+                                                                    taskFolders[
                                                                             index]
                                                                         .get(
                                                                             'id'),
-                                                                    '${snapshot.data[index].get('name')}',
-                                                                    snapshot
-                                                                        .data[
+                                                                    '${taskFolders[index].get('name')}',
+                                                                    taskFolders[
                                                                             index]
                                                                         .get(
                                                                             'iconColor')));
@@ -383,8 +388,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ElevatedButton(
                                                     child: Text('Sil'),
                                                     onPressed: () {
-                                                      deleteTaskFolder(snapshot
-                                                          .data[index].id);
+                                                      deleteTaskFolder(
+                                                          taskFolders[index]
+                                                              .id);
                                                       Navigator.of(context)
                                                           .pop(true);
                                                       ScaffoldMessenger.of(
@@ -409,7 +415,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Text(
-                                            '${snapshot.data[index].get('name')}',
+                                            '${taskFolders[index].get('name')}',
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               fontSize: 18.0,
@@ -424,15 +430,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 child: Icon(
                                                   Icons.folder,
                                                   color: ColorsUtil
-                                                      .colorNameToColor(snapshot
-                                                          .data[index]
-                                                          .get('iconColor')),
+                                                      .colorNameToColor(
+                                                          taskFolders[index]
+                                                              .get(
+                                                                  'iconColor')),
                                                   size: 28.0,
                                                 ),
                                               ),
                                               Center(
                                                 child: Text(
-                                                  '${snapshot.data[index].get('taskCount')}',
+                                                  '${taskFolders[index].get('taskCount')}',
                                                   style: TextStyle(
                                                       fontSize: 18.0,
                                                       fontWeight:
@@ -440,7 +447,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       color: Colors.indigo),
                                                 ),
                                               ),
-                                              snapshot.data[index]
+                                              taskFolders[index]
                                                       .get('isPrivate')
                                                   ? Center(
                                                       child: Icon(
