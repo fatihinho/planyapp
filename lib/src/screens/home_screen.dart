@@ -77,9 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _initTaskFolders() {
-    getTaskFolders().listen((event) {
+    getTaskFolders().forEach((element) {
       setState(() {
-        _taskFolders = event.docs;
+        _taskFolders = element.docs;
       });
     });
   }
