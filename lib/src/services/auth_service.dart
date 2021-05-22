@@ -5,29 +5,16 @@ class AuthService {
 
   String get userUID => _auth.currentUser!.uid;
 
+  bool get hasCurrentUser => _auth.currentUser != null ? true : false;
+
   Future<bool> signInAnonymous() async {
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInAnonymously();
-      final User? user = userCredential.user;
-      if (user != null) {
-        return true;
-      }
-    } catch (e) {
-      print(e);
+    UserCredential userCredential = await FirebaseAuth.instance
+        .signInAnonymously()
+        .catchError((e) => throw e.toString());
+    final User? user = userCredential.user;
+    if (user != null) {
+      return true;
     }
     return false;
-  }
-
-  bool hasCurrentUser() {
-    if (_auth.currentUser != null) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Future<void> signOut() async {
-    await _auth.signOut();
   }
 }

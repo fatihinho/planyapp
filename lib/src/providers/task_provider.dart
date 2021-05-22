@@ -12,9 +12,4 @@ class TaskProvider extends ChangeNotifier {
     totalTaskCount--;
     notifyListeners();
   }
-
-  void decreaseByFolderTaskCount(num taskCount) {
-    totalTaskCount -= taskCount;
-    notifyListeners();
-  }
 }

@@ -164,8 +164,8 @@ class _TaskScreenState extends State<TaskScreen> {
                               if (tasks[index].get('folderId') ==
                                   widget._folderId) {
                                 if (_searchController.text.isEmpty) {
-                                  return TaskList(
-                                      index, widget._folderId, tasks);
+                                  return TaskList(index, widget._folderId,
+                                      _searchTyped, tasks);
                                 } else if (tasks[index]
                                         .get('title')
                                         .toLowerCase()
@@ -176,8 +176,8 @@ class _TaskScreenState extends State<TaskScreen> {
                                         .toLowerCase()
                                         .contains(_searchController.text
                                             .toLowerCase())) {
-                                  return TaskList(
-                                      index, widget._folderId, tasks);
+                                  return TaskList(index, widget._folderId,
+                                      _searchTyped, tasks);
                                 } else {
                                   return Container();
                                 }
@@ -201,12 +201,16 @@ class _TaskScreenState extends State<TaskScreen> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.cyan,
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.of(context).push(_navigateToTaskAdding(widget._folderId));
-        },
+      floatingActionButton: Container(
+        width: 72.0,
+        height: 72.0,
+        child: FloatingActionButton(
+          backgroundColor: Colors.cyan,
+          child: Icon(Icons.add, size: 48.0),
+          onPressed: () {
+            Navigator.of(context).push(_navigateToTaskAdding(widget._folderId));
+          },
+        ),
       ),
     );
   }

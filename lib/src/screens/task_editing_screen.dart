@@ -4,15 +4,15 @@ import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
 import 'package:provider/provider.dart';
 
-class TaskAddingScreen extends StatefulWidget {
-  final int _folderId;
-  TaskAddingScreen(this._folderId);
+class TaskEditingScreen extends StatefulWidget {
+  final String _id;
+  TaskEditingScreen(this._id);
 
   @override
-  _TaskAddingScreenState createState() => _TaskAddingScreenState();
+  _TaskEditingScreenState createState() => _TaskEditingScreenState();
 }
 
-class _TaskAddingScreenState extends State<TaskAddingScreen> {
+class _TaskEditingScreenState extends State<TaskEditingScreen> {
   final _firestoreService = FirestoreService();
 
   final _titleController = TextEditingController();
@@ -56,6 +56,33 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
     }
   }
 
+  void _initTask() async {
+    var task = await _firestoreService.getTaskById(widget._id);
+    setState(() {
+      if (task.get('title') != null) {
+        _titleController.text = task.get('title');
+      }
+      if (task.get('note') != null) {
+        _noteController.text = task.get('note');
+      }
+      if (task.get('year') != null) {
+        _date = DateTime(int.parse(task.get('year')),
+            int.parse(task.get('month')), int.parse(task.get('day')));
+      }
+      if (task.get('hour') != null) {
+        _time = TimeOfDay(
+            hour: int.parse(task.get('hour')),
+            minute: int.parse(task.get('minute')));
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initTask();
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -66,8 +93,6 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
-    final taskProvider = Provider.of<TaskProvider>(context);
 
     return Scaffold(
         appBar: AppBar(
@@ -86,13 +111,13 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                   child: Row(
                     children: [
                       Icon(
-                        Icons.add_circle,
+                        Icons.edit,
                         color: Colors.white,
                         size: 36.0,
                       ),
                       SizedBox(width: 8.0),
                       Text(
-                        'Yeni Not',
+                        'Not Düzenleme',
                         style: TextStyle(
                             fontSize: 28.0,
                             fontWeight: FontWeight.bold,
@@ -246,18 +271,15 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                 onPressed: () {
                                   if (_titleController.text.trim().isNotEmpty ||
                                       _noteController.text.trim().isNotEmpty) {
-                                    _firestoreService.addTask(
-                                        UniqueKey().hashCode,
+                                    _firestoreService.editTask(
+                                        widget._id,
                                         _titleController.text,
                                         _noteController.text,
                                         _date?.day.toString(),
                                         _date?.month.toString(),
                                         _date?.year.toString(),
                                         _time?.hour.toString(),
-                                        _time?.minute.toString(),
-                                        false,
-                                        widget._folderId);
-                                    taskProvider.increaseTotalTaskCount();
+                                        _time?.minute.toString());
                                     Navigator.of(context).pop(true);
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -268,7 +290,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                                 Text('Eksik Alan Mevcut!')));
                                   }
                                 },
-                                child: Text('Oluştur'),
+                                child: Text('Düzenle'),
                                 style: ElevatedButton.styleFrom(
                                     primary: Colors.indigo)))
                       ],

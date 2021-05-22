@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:planyapp/src/providers/task_provider.dart';
-import 'package:planyapp/src/screens/login_screen.dart';
 import 'package:planyapp/src/screens/task_screen.dart';
 import 'package:planyapp/src/screens/taskfolder_adding_screen.dart';
-import 'package:planyapp/src/services/auth_service.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/utils/colors_util.dart';
 import 'package:provider/provider.dart';
@@ -17,9 +15,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   var _userName = '';
 
-  final _authService = AuthService();
   final _firestoreService = FirestoreService();
 
+  final _nameController = TextEditingController();
   final _passwordController = TextEditingController();
 
   Route _navigateToTasks(int folderId, String title, String color) {
@@ -79,6 +77,13 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _initTotalTaskCount(TaskProvider taskProvider) async {
+    var totalTaskCount = await _firestoreService.getTotalTaskCount();
+    setState(() {
+      taskProvider.totalTaskCount = totalTaskCount;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -88,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     super.dispose();
+    _nameController.dispose();
     _passwordController.dispose();
   }
 
@@ -96,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final size = MediaQuery.of(context).size;
 
     final taskProvider = Provider.of<TaskProvider>(context);
+    _initTotalTaskCount(taskProvider);
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -138,11 +145,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             SizedBox(height: 8.0),
                             taskProvider.totalTaskCount > 0
                                 ? Text(
-                                    'Planlanmış ${taskProvider.totalTaskCount} tane notun var',
+                                    'Kayıtlı ${taskProvider.totalTaskCount} adet notun var',
                                     style: TextStyle(color: Colors.white),
                                   )
                                 : Text(
-                                    'Planlanmış hiç notun yok',
+                                    'Kayıtlı hiç notun yok',
                                     style: TextStyle(color: Colors.white),
                                   ),
                             SizedBox(height: 48.0),
@@ -167,18 +174,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (_) => AlertDialog(
                                 title: Row(
                                   children: [
-                                    Icon(Icons.warning,
-                                        color: Colors.red.shade400),
-                                    SizedBox(width: 2.0),
-                                    Text('Uyarı'),
+                                    Icon(Icons.edit,
+                                        color: Colors.orange.shade400),
+                                    SizedBox(width: 4.0),
+                                    Text('Yeni İsim'),
                                   ],
                                 ),
-                                content: Text(
-                                  'Bu işlemden sonra tüm veriler silinecektir.\n\nÇıkış yapmak istiyor musun?',
-                                  style: TextStyle(
-                                      color: Colors.red.shade400,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                                content: TextField(
+                                    cursorColor: Colors.orange.shade400,
+                                    decoration: InputDecoration(
+                                      focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors.orange.shade400)),
+                                    ),
+                                    controller: _nameController),
                                 actions: [
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
@@ -186,20 +195,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: Text('İptal'),
                                     onPressed: () {
                                       Navigator.of(context).pop(false);
+                                      _nameController.clear();
                                     },
                                   ),
                                   ElevatedButton(
-                                      child: Text('Çıkış Yap'),
-                                      onPressed: () async {
-                                        await _authService.signOut().then(
-                                            (value) => Navigator.of(context)
-                                                .pushAndRemoveUntil(
-                                                    MaterialPageRoute(
-                                                        builder: (BuildContext
-                                                                context) =>
-                                                            LoginScreen()),
-                                                    (route) => false));
-                                      })
+                                    child: Text('Düzenle'),
+                                    onPressed: () {
+                                      if (_nameController.text
+                                          .trim()
+                                          .isNotEmpty) {
+                                        _firestoreService
+                                            .editUserName(_nameController.text);
+                                        _initUserName();
+                                        Navigator.of(context).pop(true);
+                                        _nameController.clear();
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                backgroundColor:
+                                                    Colors.orangeAccent,
+                                                content:
+                                                    Text('İsim Giriniz!')));
+                                        _nameController.clear();
+                                      }
+                                    },
+                                  )
                                 ],
                               ));
                     },
@@ -208,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Container(
                         margin: EdgeInsets.only(top: size.height * 0.1),
                         child: Align(
-                            child: Icon(Icons.logout,
+                            child: Icon(Icons.edit,
                                 color: Colors.white, size: 28.0),
                             alignment: Alignment.topRight),
                       ),
@@ -218,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text('Planlar',
+                child: Text('Klasörler',
                     style:
                         TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
               ),
@@ -294,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       child: Text('İptal'),
                                                       onPressed: () {
                                                         Navigator.of(context)
-                                                            .pop();
+                                                            .pop(false);
                                                         _passwordController
                                                             .clear();
                                                       },
@@ -375,12 +395,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       _firestoreService
                                                           .deleteTaskFolder(
                                                               taskFolders[index]
-                                                                  .id);
-                                                      taskProvider
-                                                          .decreaseByFolderTaskCount(
+                                                                  .id,
                                                               taskFolders[index]
-                                                                  .get(
-                                                                      'taskCount'));
+                                                                  .get('id'));
                                                       Navigator.of(context)
                                                           .pop(true);
                                                       ScaffoldMessenger.of(

@@ -68,15 +68,15 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: SingleChildScrollView(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30.0),
-                          topRight: Radius.circular(30.0))),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        topRight: Radius.circular(30.0))),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
                     child: Column(
                       children: [
                         Padding(
@@ -390,8 +390,8 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                       ],
                     ),
                   ),
-                  height: size.height * 0.75,
                 ),
+                height: size.height * 0.75,
               ),
             )
           ],

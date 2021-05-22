@@ -37,6 +37,6 @@ class App extends StatelessWidget {
         supportedLocales: [
           const Locale('tr', 'TR'),
         ],
-        home: _authService.hasCurrentUser() ? HomeScreen() : LoginScreen());
+        home: _authService.hasCurrentUser ? HomeScreen() : LoginScreen());
   }
 }
