@@ -68,7 +68,7 @@ const List<Color> bottomGradients = [
 class WavyHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     return ClipPath(
       clipper: TopWaveClipper(),
@@ -88,7 +88,7 @@ class WavyHeader extends StatelessWidget {
 class WavyFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     return ClipPath(
       clipper: FooterWaveClipper(),
