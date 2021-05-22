@@ -22,6 +22,8 @@ void main() async {
 }
 
 class App extends StatelessWidget {
+  final _authService = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,6 +37,6 @@ class App extends StatelessWidget {
         supportedLocales: [
           const Locale('tr', 'TR'),
         ],
-        home: hasCurrentUser() ? HomeScreen() : LoginScreen());
+        home: _authService.hasCurrentUser() ? HomeScreen() : LoginScreen());
   }
 }

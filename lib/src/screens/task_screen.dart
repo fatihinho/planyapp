@@ -20,6 +20,8 @@ class _TaskScreenState extends State<TaskScreen> {
   var _appBarSearch = const TextField();
   var _searchIcon = const Icon(Icons.search);
 
+  final _firestoreService = FirestoreService();
+
   final _searchController = TextEditingController();
 
   Route _navigateToTaskAdding(int folderId) {
@@ -144,7 +146,7 @@ class _TaskScreenState extends State<TaskScreen> {
                       topLeft: Radius.circular(30.0),
                       topRight: Radius.circular(30.0))),
               child: StreamBuilder(
-                  stream: getTasks(),
+                  stream: _firestoreService.getTasks(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (!snapshot.hasData) {
                       return Center(child: CircularProgressIndicator());

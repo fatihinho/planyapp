@@ -11,7 +11,7 @@ const List<Color> _startingGradients = [
 
 Widget _roundedRectButton(String title, List<Color> gradient) {
   return Builder(builder: (context) {
-    var size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     return Padding(
       padding: EdgeInsets.only(bottom: 10.0),
@@ -43,11 +43,14 @@ Widget _roundedRectButton(String title, List<Color> gradient) {
 }
 
 class LoginScreenWidget extends StatelessWidget {
+  final _authService = AuthService();
+  final _firestoreService = FirestoreService();
+
   final _nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     return Column(
       children: [
@@ -104,14 +107,16 @@ class LoginScreenWidget extends StatelessWidget {
             GestureDetector(
                 onTap: () {
                   if (_nameController.text.isNotEmpty) {
-                    signInAnonymous().then((value) => {
+                    _authService.signInAnonymous().then((value) => {
                           if (value)
                             {
-                              setUserName(_nameController.text),
-                              Navigator.of(context).pushReplacement(
+                              _firestoreService
+                                  .setUserName(_nameController.text),
+                              Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          HomeScreen()))
+                                          HomeScreen()),
+                                  (route) => false)
                             }
                         });
                   } else {

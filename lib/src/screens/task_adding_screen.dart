@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
+import 'package:provider/provider.dart';
 
 class TaskAddingScreen extends StatefulWidget {
   final int _folderId;
@@ -11,8 +13,10 @@ class TaskAddingScreen extends StatefulWidget {
 }
 
 class _TaskAddingScreenState extends State<TaskAddingScreen> {
-  var _titleController = TextEditingController();
-  var _noteController = TextEditingController();
+  final _firestoreService = FirestoreService();
+
+  final _titleController = TextEditingController();
+  final _noteController = TextEditingController();
 
   DateTime? _date;
   TimeOfDay? _time;
@@ -62,6 +66,8 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
+    final taskProvider = Provider.of<TaskProvider>(context);
 
     return Scaffold(
         appBar: AppBar(
@@ -218,7 +224,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                 onPressed: () {
                                   if (_titleController.text.isNotEmpty &&
                                       _noteController.text.isNotEmpty) {
-                                    addTask(
+                                    _firestoreService.addTask(
                                         UniqueKey().hashCode,
                                         _titleController.text,
                                         _noteController.text,
@@ -229,6 +235,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                         _time?.minute.toString(),
                                         false,
                                         widget._folderId);
+                                    taskProvider.increaseTotalTaskCount();
                                     Navigator.of(context).pop(true);
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(

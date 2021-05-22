@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class LoginScreenBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -16,14 +16,16 @@ class LoginScreenBackground extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  Image.asset(
-                    'assets/planyapp.png',
-                    width: size.width / 2.7,
+                  Container(
+                    width: size.width * 0.3,
+                    child: Image.asset(
+                      'assets/planyapp.png',
+                    ),
                   ),
                   SizedBox(height: 16.0),
                   Text('PlanyApp',
                       style: TextStyle(
-                          fontSize: 40.0,
+                          fontSize: 36.0,
                           fontWeight: FontWeight.bold,
                           fontFamily: GoogleFonts.average().fontFamily,
                           color: Colors.cyan.shade900))

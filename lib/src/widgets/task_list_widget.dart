@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
 import 'package:planyapp/src/widgets/textstyles_widget.dart';
+import 'package:provider/provider.dart';
 
 class TaskList extends StatefulWidget {
   final int _index;
@@ -15,6 +17,8 @@ class TaskList extends StatefulWidget {
 }
 
 class _TaskListState extends State<TaskList> {
+  final _firestoreService = FirestoreService();
+
   Widget _stackBehindDismiss() {
     return Container(
       alignment: Alignment.centerRight,
@@ -27,7 +31,8 @@ class _TaskListState extends State<TaskList> {
     );
   }
 
-  Future<bool> promptUser(DismissDirection direction) async {
+  Future<bool> promptUser(
+      DismissDirection direction, TaskProvider taskProvider) async {
     if (direction == DismissDirection.endToStart) {
       return await showDialog<bool>(
               context: context,
@@ -45,8 +50,10 @@ class _TaskListState extends State<TaskList> {
                       ElevatedButton(
                         child: Text('Sil'),
                         onPressed: () {
-                          deleteTask(widget._tasks[widget._index].id,
+                          _firestoreService.deleteTask(
+                              widget._tasks[widget._index].id,
                               widget._folderId);
+                          taskProvider.decreaseTotalTaskCount();
                           Navigator.of(context).pop(true);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -65,17 +72,20 @@ class _TaskListState extends State<TaskList> {
 
   @override
   Widget build(BuildContext context) {
+    final taskProvider = Provider.of<TaskProvider>(context);
+
     return Dismissible(
       key: Key(widget._tasks[widget._index].id),
       background: _stackBehindDismiss(),
       direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) => promptUser(direction),
+      confirmDismiss: (direction) => promptUser(direction, taskProvider),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListTile(
           leading: GestureDetector(
               onTap: () {
-                updateTaskCompleted(widget._tasks[widget._index].id);
+                _firestoreService
+                    .updateTaskCompleted(widget._tasks[widget._index].id);
               },
               child: widget._tasks[widget._index].get('isCompleted')
                   ? TasksTextStyles.completedTaskLeading

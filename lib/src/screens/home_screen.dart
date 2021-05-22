@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/login_screen.dart';
 import 'package:planyapp/src/screens/task_screen.dart';
 import 'package:planyapp/src/screens/taskfolder_adding_screen.dart';
 import 'package:planyapp/src/services/auth_service.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/utils/colors_util.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -13,11 +15,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _userName = '';
-  num _plannedTaskCount = 0;
-  List<QueryDocumentSnapshot> _taskFolders = [];
+  var _userName = '';
 
-  var _passwordController = TextEditingController();
+  final _authService = AuthService();
+  final _firestoreService = FirestoreService();
+
+  final _passwordController = TextEditingController();
 
   Route _navigateToTasks(int folderId, String title, String color) {
     return PageRouteBuilder(
@@ -70,27 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _initUserName() async {
-    var userName = await getUserName();
+    var userName = await _firestoreService.getUserName();
     setState(() {
       _userName = userName;
-    });
-  }
-
-  void _initTaskFolders() {
-    getTaskFolders().forEach((element) {
-      setState(() {
-        _taskFolders = element.docs;
-      });
-    });
-  }
-
-  void _sumPlannedTaskCount() {
-    _initTaskFolders();
-    setState(() {
-      _plannedTaskCount = 0;
-      _taskFolders.forEach((element) {
-        _plannedTaskCount += element.get('taskCount');
-      });
     });
   }
 
@@ -110,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    _sumPlannedTaskCount();
+    final taskProvider = Provider.of<TaskProvider>(context);
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -144,16 +129,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Merhaba $_userName!',
+                              'Merhaba $_userName',
                               style: TextStyle(
                                   fontSize: _getNameFontSize(),
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
                             ),
                             SizedBox(height: 8.0),
-                            _plannedTaskCount > 0
+                            taskProvider.totalTaskCount > 0
                                 ? Text(
-                                    'Planlanmış $_plannedTaskCount tane notun var',
+                                    'Planlanmış ${taskProvider.totalTaskCount} tane notun var',
                                     style: TextStyle(color: Colors.white),
                                   )
                                 : Text(
@@ -204,18 +189,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                     },
                                   ),
                                   ElevatedButton(
-                                    child: Text('Çıkış Yap'),
-                                    onPressed: () {
-                                      signOut().then((_) => {
-                                            Navigator.of(context)
-                                                .pushReplacement(
+                                      child: Text('Çıkış Yap'),
+                                      onPressed: () async {
+                                        await _authService.signOut().then(
+                                            (value) => Navigator.of(context)
+                                                .pushAndRemoveUntil(
                                                     MaterialPageRoute(
                                                         builder: (BuildContext
                                                                 context) =>
-                                                            LoginScreen()))
-                                          });
-                                    },
-                                  )
+                                                            LoginScreen()),
+                                                    (route) => false));
+                                      })
                                 ],
                               ));
                     },
@@ -244,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: BoxDecoration(
                       shape: BoxShape.rectangle, color: Colors.white),
                   child: StreamBuilder(
-                      stream: getTaskFolders(),
+                      stream: _firestoreService.getTaskFolders(),
                       builder: (context, AsyncSnapshot snapshot) {
                         if (!snapshot.hasData) {
                           return Center(child: CircularProgressIndicator());
@@ -388,9 +372,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ElevatedButton(
                                                     child: Text('Sil'),
                                                     onPressed: () {
-                                                      deleteTaskFolder(
-                                                          taskFolders[index]
-                                                              .id);
+                                                      _firestoreService
+                                                          .deleteTaskFolder(
+                                                              taskFolders[index]
+                                                                  .id);
+                                                      taskProvider
+                                                          .decreaseByFolderTaskCount(
+                                                              taskFolders[index]
+                                                                  .get(
+                                                                      'taskCount'));
                                                       Navigator.of(context)
                                                           .pop(true);
                                                       ScaffoldMessenger.of(

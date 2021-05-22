@@ -8,11 +8,13 @@ class TaskFolderAddingScreen extends StatefulWidget {
 }
 
 class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
-  bool _isPrivate = false;
-  int _selectedBoxIndex = 0;
+  var _isPrivate = false;
+  var _selectedBoxIndex = 0;
 
-  var _passwordController = TextEditingController();
-  var _folderNameController = TextEditingController();
+  final _firestoreService = FirestoreService();
+
+  final _passwordController = TextEditingController();
+  final _folderNameController = TextEditingController();
 
   BoxDecoration _selectedColorBoxDecoration(Color color) {
     return BoxDecoration(
@@ -356,7 +358,7 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                       (_isPrivate &&
                                           _passwordController
                                               .text.isNotEmpty)) {
-                                    addTaskFolder(
+                                    _firestoreService.addTaskFolder(
                                       UniqueKey().hashCode,
                                       _folderNameController.text,
                                       ColorsUtil.colorValueToName(ColorsUtil
