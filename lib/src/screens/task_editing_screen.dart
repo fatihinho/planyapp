@@ -4,7 +4,8 @@ import 'package:planyapp/src/utils/datetime_format_util.dart';
 
 class TaskEditingScreen extends StatefulWidget {
   final String _id;
-  TaskEditingScreen(this._id);
+  final Function _editTask;
+  TaskEditingScreen(this._id, this._editTask);
 
   @override
   _TaskEditingScreenState createState() => _TaskEditingScreenState();
@@ -266,28 +267,12 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
                             height: 50.0,
                             width: size.width,
                             child: ElevatedButton(
-                                onPressed: () {
-                                  if (_titleController.text.trim().isNotEmpty ||
-                                      _noteController.text.trim().isNotEmpty) {
-                                    _firestoreService.editTask(
-                                        widget._id,
-                                        _titleController.text,
-                                        _noteController.text,
-                                        _date?.day.toString(),
-                                        _date?.month.toString(),
-                                        _date?.year.toString(),
-                                        _time?.hour.toString(),
-                                        _time?.minute.toString());
-                                    Navigator.of(context).pop(true);
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            backgroundColor:
-                                                Colors.orangeAccent,
-                                            content:
-                                                Text('Eksik Alan Mevcut!')));
-                                  }
-                                },
+                                onPressed: () => widget._editTask(
+                                    widget._id,
+                                    _titleController,
+                                    _noteController,
+                                    _date,
+                                    _time),
                                 child: Text('Düzenle'),
                                 style: ElevatedButton.styleFrom(
                                     primary: Colors.indigo)))

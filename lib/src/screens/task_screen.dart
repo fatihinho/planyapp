@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/task_adding_screen.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/utils/colors_util.dart';
@@ -24,10 +25,10 @@ class _TaskScreenState extends State<TaskScreen> {
 
   final _searchController = TextEditingController();
 
-  Route _navigateToTaskAdding(int folderId) {
+  Route _navigateToTaskAdding(int folderId, Function addTask) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
-          TaskAddingScreen(folderId),
+          TaskAddingScreen(addTask),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = Offset(1.0, 0.0);
         var end = Offset.zero;
@@ -82,6 +83,82 @@ class _TaskScreenState extends State<TaskScreen> {
         _searchController.clear();
       }
     });
+  }
+
+  void _onTaskCompleted(List<DocumentSnapshot> tasks, int index) async {
+    await _firestoreService.updateTaskCompleted(tasks[index].id);
+    setState(() {});
+  }
+
+  void _addTask(
+    TextEditingController titleController,
+    TextEditingController noteController,
+    DateTime? date,
+    TimeOfDay? time,
+    TaskProvider taskProvider,
+  ) async {
+    if (titleController.text.trim().isNotEmpty ||
+        noteController.text.trim().isNotEmpty) {
+      await _firestoreService.addTask(
+          UniqueKey().hashCode,
+          titleController.text,
+          noteController.text,
+          date?.day.toString(),
+          date?.month.toString(),
+          date?.year.toString(),
+          time?.hour.toString(),
+          time?.minute.toString(),
+          false,
+          widget._folderId);
+      taskProvider.increaseTotalTaskCount();
+      Navigator.of(context).pop(true);
+      setState(() {});
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.orangeAccent,
+          content: Text('Eksik Alan Mevcut!')));
+    }
+  }
+
+  void _editTask(
+    String id,
+    TextEditingController titleController,
+    TextEditingController noteController,
+    DateTime? date,
+    TimeOfDay? time,
+  ) async {
+    if (titleController.text.trim().isNotEmpty ||
+        noteController.text.trim().isNotEmpty) {
+      _firestoreService.editTask(
+          id,
+          titleController.text,
+          noteController.text,
+          date?.day.toString(),
+          date?.month.toString(),
+          date?.year.toString(),
+          time?.hour.toString(),
+          time?.minute.toString());
+      Navigator.of(context).pop(true);
+      setState(() {});
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.orangeAccent,
+          content: Text('Eksik Alan Mevcut!')));
+    }
+  }
+
+  void _deleteTask(List<DocumentSnapshot> tasks, int index,
+      TaskProvider taskProvider) async {
+    await _firestoreService.deleteTask(tasks[index].id, widget._folderId);
+    taskProvider.decreaseTotalTaskCount();
+    Navigator.of(context).pop(true);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.redAccent,
+        content: Text('Plan Silindi'),
+      ),
+    );
+    setState(() {});
   }
 
   @override
@@ -145,8 +222,8 @@ class _TaskScreenState extends State<TaskScreen> {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30.0),
                       topRight: Radius.circular(30.0))),
-              child: StreamBuilder(
-                  stream: _firestoreService.getTasks(),
+              child: FutureBuilder(
+                  future: _firestoreService.getTasks(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (!snapshot.hasData) {
                       return Center(child: CircularProgressIndicator());
@@ -164,8 +241,8 @@ class _TaskScreenState extends State<TaskScreen> {
                               if (tasks[index].get('folderId') ==
                                   widget._folderId) {
                                 if (_searchController.text.isEmpty) {
-                                  return TaskList(index, widget._folderId,
-                                      _searchTyped, tasks);
+                                  return TaskList(index, _searchTyped, tasks,
+                                      _onTaskCompleted, _deleteTask, _editTask);
                                 } else if (tasks[index]
                                         .get('title')
                                         .toLowerCase()
@@ -176,8 +253,8 @@ class _TaskScreenState extends State<TaskScreen> {
                                         .toLowerCase()
                                         .contains(_searchController.text
                                             .toLowerCase())) {
-                                  return TaskList(index, widget._folderId,
-                                      _searchTyped, tasks);
+                                  return TaskList(index, _searchTyped, tasks,
+                                      _onTaskCompleted, _deleteTask, _editTask);
                                 } else {
                                   return Container();
                                 }
@@ -208,7 +285,8 @@ class _TaskScreenState extends State<TaskScreen> {
           backgroundColor: Colors.cyan,
           child: Icon(Icons.add, size: 48.0),
           onPressed: () {
-            Navigator.of(context).push(_navigateToTaskAdding(widget._folderId));
+            Navigator.of(context)
+                .push(_navigateToTaskAdding(widget._folderId, _addTask));
           },
         ),
       ),

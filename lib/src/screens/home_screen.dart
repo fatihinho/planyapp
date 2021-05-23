@@ -247,8 +247,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                       shape: BoxShape.rectangle, color: Colors.white),
-                  child: StreamBuilder(
-                      stream: _firestoreService.getTaskFolders(),
+                  child: FutureBuilder(
+                      future: _firestoreService.getTaskFolders(),
                       builder: (context, AsyncSnapshot snapshot) {
                         if (!snapshot.hasData) {
                           return Center(child: CircularProgressIndicator());

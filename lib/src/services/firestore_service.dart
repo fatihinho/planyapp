@@ -26,10 +26,6 @@ class FirestoreService {
         .update({'userName': userName}).catchError((e) => throw e.toString());
   }
 
-  Stream<QuerySnapshot> getTasks() {
-    return _users.doc(_authService.userUID).collection('task').snapshots();
-  }
-
   Future<DocumentSnapshot> getTaskById(String id) async {
     return await _users
         .doc(_authService.userUID)
@@ -38,11 +34,15 @@ class FirestoreService {
         .get();
   }
 
-  Stream<QuerySnapshot> getTaskFolders() {
-    return _users
+  Future<QuerySnapshot> getTasks() async {
+    return await _users.doc(_authService.userUID).collection('task').get();
+  }
+
+  Future<QuerySnapshot> getTaskFolders() async {
+    return await _users
         .doc(_authService.userUID)
         .collection('taskFolder')
-        .snapshots();
+        .get();
   }
 
   Future<int> getCurrentTaskCount(int folderId) async {

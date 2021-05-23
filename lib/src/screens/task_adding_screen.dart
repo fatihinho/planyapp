@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:planyapp/src/providers/task_provider.dart';
-import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
 import 'package:provider/provider.dart';
 
 class TaskAddingScreen extends StatefulWidget {
-  final int _folderId;
-  TaskAddingScreen(this._folderId);
+  final Function _addTask;
+  TaskAddingScreen(this._addTask);
 
   @override
   _TaskAddingScreenState createState() => _TaskAddingScreenState();
 }
 
 class _TaskAddingScreenState extends State<TaskAddingScreen> {
-  final _firestoreService = FirestoreService();
-
   final _titleController = TextEditingController();
   final _noteController = TextEditingController();
 
@@ -243,31 +240,12 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                             height: 50.0,
                             width: size.width,
                             child: ElevatedButton(
-                                onPressed: () {
-                                  if (_titleController.text.trim().isNotEmpty ||
-                                      _noteController.text.trim().isNotEmpty) {
-                                    _firestoreService.addTask(
-                                        UniqueKey().hashCode,
-                                        _titleController.text,
-                                        _noteController.text,
-                                        _date?.day.toString(),
-                                        _date?.month.toString(),
-                                        _date?.year.toString(),
-                                        _time?.hour.toString(),
-                                        _time?.minute.toString(),
-                                        false,
-                                        widget._folderId);
-                                    taskProvider.increaseTotalTaskCount();
-                                    Navigator.of(context).pop(true);
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            backgroundColor:
-                                                Colors.orangeAccent,
-                                            content:
-                                                Text('Eksik Alan Mevcut!')));
-                                  }
-                                },
+                                onPressed: () => widget._addTask(
+                                    _titleController,
+                                    _noteController,
+                                    _date,
+                                    _time,
+                                    taskProvider),
                                 child: Text('Oluştur'),
                                 style: ElevatedButton.styleFrom(
                                     primary: Colors.indigo)))
