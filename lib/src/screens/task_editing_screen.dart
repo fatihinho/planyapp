@@ -115,7 +115,7 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
                       ),
                       SizedBox(width: 8.0),
                       Text(
-                        'Not Düzenleme',
+                        'Not Düzenle',
                         style: TextStyle(
                             fontSize: 28.0,
                             fontWeight: FontWeight.bold,

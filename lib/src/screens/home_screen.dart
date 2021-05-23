@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _initUserName() async {
     var userName = await _firestoreService.getUserName();
     setState(() {
-      _userName = userName;
+      _userName = 'Merhaba $userName!';
     });
   }
 
@@ -136,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Merhaba $_userName',
+                              '$_userName',
                               style: TextStyle(
                                   fontSize: _getNameFontSize(),
                                   color: Colors.white,
@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Icon(Icons.edit,
                                         color: Colors.orange.shade400),
                                     SizedBox(width: 4.0),
-                                    Text('Yeni İsim'),
+                                    Text('İsim Düzenle'),
                                   ],
                                 ),
                                 content: TextField(
