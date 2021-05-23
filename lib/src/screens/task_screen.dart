@@ -112,12 +112,12 @@ class _TaskScreenState extends State<TaskScreen> {
           widget._folderId);
       taskProvider.increaseTotalTaskCount();
       Navigator.of(context).pop(true);
-      setState(() {});
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.orangeAccent,
           content: Text('Eksik Alan Mevcut!')));
     }
+    setState(() {});
   }
 
   void _editTask(
@@ -139,12 +139,12 @@ class _TaskScreenState extends State<TaskScreen> {
           time?.hour.toString(),
           time?.minute.toString());
       Navigator.of(context).pop(true);
-      setState(() {});
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.orangeAccent,
           content: Text('Eksik Alan Mevcut!')));
     }
+    setState(() {});
   }
 
   void _deleteTask(List<DocumentSnapshot> tasks, int index,
