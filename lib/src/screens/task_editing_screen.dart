@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
+import 'package:planyapp/src/widgets/admob_banner_widget.dart';
 
 class TaskEditingScreen extends StatefulWidget {
   final String _id;
@@ -129,15 +130,15 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: SingleChildScrollView(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30.0),
-                          topRight: Radius.circular(30.0))),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        topRight: Radius.circular(30.0))),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
                     child: Column(
                       children: [
                         TextField(
@@ -279,11 +280,12 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
                       ],
                     ),
                   ),
-                  height: size.height * 0.75,
                 ),
+                height: size.height * 0.70,
               ),
             )
           ],
-        ));
+        ),
+        bottomNavigationBar: AdMobBanner());
   }
 }
