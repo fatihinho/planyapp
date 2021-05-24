@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
-import 'package:planyapp/src/widgets/admob_banner_widget.dart';
 
 class TaskEditingScreen extends StatefulWidget {
   final String _id;
@@ -285,7 +284,6 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
               ),
             )
           ],
-        ),
-        bottomNavigationBar: AdMobBanner());
+        ));
   }
 }

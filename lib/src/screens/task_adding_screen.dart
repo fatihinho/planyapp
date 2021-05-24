@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
-import 'package:planyapp/src/widgets/admob_banner_widget.dart';
 import 'package:provider/provider.dart';
 
 class TaskAddingScreen extends StatefulWidget {
@@ -258,7 +257,6 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
               ),
             )
           ],
-        ),
-        bottomNavigationBar: AdMobBanner());
+        ));
   }
 }

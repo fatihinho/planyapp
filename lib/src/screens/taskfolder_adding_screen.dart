@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/utils/colors_util.dart';
-import 'package:planyapp/src/widgets/admob_banner_widget.dart';
 
 class TaskFolderAddingScreen extends StatefulWidget {
   @override
@@ -396,7 +395,6 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
               ),
             )
           ],
-        ),
-        bottomNavigationBar: AdMobBanner());
+        ));
   }
 }
