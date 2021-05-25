@@ -4,14 +4,17 @@ import 'package:planyapp/src/utils/datetime_format_util.dart';
 
 class TaskEditingScreen extends StatefulWidget {
   final String _id;
+  final bool hasAlarm;
   final Function _editTask;
-  TaskEditingScreen(this._id, this._editTask);
+  TaskEditingScreen(this._id, this.hasAlarm, this._editTask);
 
   @override
   _TaskEditingScreenState createState() => _TaskEditingScreenState();
 }
 
 class _TaskEditingScreenState extends State<TaskEditingScreen> {
+  late bool _hasAlarm;
+
   final _firestoreService = FirestoreService();
 
   final _titleController = TextEditingController();
@@ -80,6 +83,7 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
   void initState() {
     super.initState();
     _initTask();
+    _hasAlarm = widget.hasAlarm;
   }
 
   @override
@@ -140,147 +144,261 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        TextField(
-                            controller: _titleController,
-                            decoration: InputDecoration(labelText: 'Başlık')),
-                        TextField(
-                            maxLines: null,
-                            keyboardType: TextInputType.multiline,
-                            controller: _noteController,
-                            decoration: InputDecoration(labelText: 'Not')),
-                        SizedBox(height: 24.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    _selectDate(context);
-                                  },
-                                  child: Text('Tarih Ekle',
-                                      style: TextStyle(
-                                          fontSize: 18.0,
-                                          color: Colors.indigo,
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                                SizedBox(width: 4.0),
-                                _date != null
-                                    ? GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            _date = null;
-                                          });
-                                        },
-                                        child: Text('(Sıfırla)',
-                                            style: TextStyle(
-                                                color: Colors.redAccent,
-                                                fontWeight: FontWeight.bold)),
-                                      )
-                                    : Container()
-                              ],
-                            ),
-                            _date != null
-                                ? GestureDetector(
-                                    onTap: () {
-                                      _selectDate(context);
-                                    },
-                                    child: Text(
-                                        '${DateTimeFormat.formatDate(_date?.day.toString())}/${DateTimeFormat.formatDate(_date?.month.toString())}/${_date?.year}',
-                                        style: TextStyle(
-                                            fontSize: 18.0,
-                                            color: Colors.brown,
-                                            fontWeight: FontWeight.bold)),
-                                  )
-                                : GestureDetector(
-                                    onTap: () {
-                                      _selectDate(context);
-                                    },
-                                    child: Text(
-                                      '<Tarih Eklenmedi>',
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  )
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(children: [
+                            TextField(
+                                controller: _titleController,
+                                decoration: InputDecoration(
+                                    labelText: 'Başlık',
+                                    border: OutlineInputBorder())),
+                            SizedBox(height: 16.0),
+                            TextField(
+                                maxLines: null,
+                                keyboardType: TextInputType.multiline,
+                                controller: _noteController,
+                                decoration: InputDecoration(
+                                    labelText: 'Not',
+                                    border: OutlineInputBorder())),
+                          ]),
                         ),
-                        SizedBox(height: 24.0),
+                        SizedBox(height: 12.0),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    _selectTime(context);
-                                  },
-                                  child: Text('Saat Ekle',
-                                      style: TextStyle(
-                                          fontSize: 18.0,
-                                          color: Colors.indigo,
-                                          fontWeight: FontWeight.bold)),
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _hasAlarm = false;
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          color: _hasAlarm
+                                              ? Colors.grey.shade200
+                                              : Colors.red.shade400,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(90.0))),
+                                      height: 50.0,
+                                      width: size.width * 0.4,
+                                      child:
+                                          Center(child: Icon(Icons.alarm_off))),
                                 ),
-                                SizedBox(width: 4.0),
-                                _time != null
-                                    ? GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            _time = null;
-                                          });
-                                        },
-                                        child: Text('(Sıfırla)',
-                                            style: TextStyle(
-                                                color: Colors.redAccent,
-                                                fontWeight: FontWeight.bold)),
-                                      )
-                                    : Container()
-                              ],
-                            ),
-                            _time != null
-                                ? GestureDetector(
-                                    onTap: () {
-                                      _selectTime(context);
-                                    },
-                                    child: Text(
-                                        '${DateTimeFormat.formatTime(_time?.hour.toString())}:${DateTimeFormat.formatTime(_time?.minute.toString())}',
-                                        style: TextStyle(
-                                            fontSize: 18.0,
-                                            color: Colors.brown,
-                                            fontWeight: FontWeight.bold)),
-                                  )
-                                : GestureDetector(
-                                    onTap: () {
-                                      _selectTime(context);
-                                    },
-                                    child: Text(
-                                      '<Saat Eklenmedi>',
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _hasAlarm = true;
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          color: _hasAlarm
+                                              ? Colors.cyan.shade400
+                                              : Colors.grey.shade200,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(90.0))),
+                                      height: 50.0,
+                                      width: size.width * 0.4,
+                                      child:
+                                          Center(child: Icon(Icons.alarm_on))),
+                                ),
+                              )
+                            ]),
+                        SizedBox(height: 12.0),
+                        _hasAlarm
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        _selectDate(context);
+                                      },
+                                      child: Card(
+                                        elevation: 5.0,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Container(
+                                            height: 50.0,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Icon(Icons.date_range,
+                                                        color: Colors.indigo),
+                                                    SizedBox(width: 2.0),
+                                                    Text('Tarih Ekle',
+                                                        style: TextStyle(
+                                                            fontSize: 18.0,
+                                                            color:
+                                                                Colors.indigo,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                  ],
+                                                ),
+                                                _date != null
+                                                    ? Row(
+                                                        children: [
+                                                          Text(
+                                                              '${DateTimeFormat.formatDate(_date?.day.toString())}/${DateTimeFormat.formatDate(_date?.month.toString())}/${_date?.year}',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      20.0,
+                                                                  color: Colors
+                                                                      .indigo,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold)),
+                                                          SizedBox(width: 2.0),
+                                                          GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  _date = null;
+                                                                });
+                                                              },
+                                                              child: Icon(
+                                                                  Icons.delete,
+                                                                  size: 20.0,
+                                                                  color: Colors
+                                                                      .redAccent))
+                                                        ],
+                                                      )
+                                                    : Text(
+                                                        'Tarih Eklenmedi',
+                                                        style: TextStyle(
+                                                            color: Colors.grey,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  )
-                          ],
-                        ),
-                        SizedBox(height: 48.0),
-                        Container(
-                            height: 50.0,
-                            width: size.width,
-                            child: ElevatedButton(
-                                onPressed: () => widget._editTask(
-                                    widget._id,
-                                    _titleController,
-                                    _noteController,
-                                    _date,
-                                    _time),
-                                child: Text('Düzenle'),
-                                style: ElevatedButton.styleFrom(
-                                    primary: Colors.indigo)))
+                                    SizedBox(height: 8.0),
+                                    InkWell(
+                                      onTap: () {
+                                        _selectTime(context);
+                                      },
+                                      child: Card(
+                                        elevation: 5.0,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Container(
+                                            height: 50.0,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Icon(Icons.alarm,
+                                                            color:
+                                                                Colors.indigo),
+                                                        SizedBox(width: 2.0),
+                                                        Text('Saat Ekle',
+                                                            style: TextStyle(
+                                                                fontSize: 18.0,
+                                                                color: Colors
+                                                                    .indigo,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold)),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                                _time != null
+                                                    ? Row(
+                                                        children: [
+                                                          Text(
+                                                              '${DateTimeFormat.formatTime(_time?.hour.toString())}:${DateTimeFormat.formatTime(_time?.minute.toString())}',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      20.0,
+                                                                  color: Colors
+                                                                      .indigo,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold)),
+                                                          SizedBox(width: 2.0),
+                                                          GestureDetector(
+                                                              onTap: () {
+                                                                setState(() {
+                                                                  _time = null;
+                                                                });
+                                                              },
+                                                              child: Icon(
+                                                                  Icons.delete,
+                                                                  size: 20.0,
+                                                                  color: Colors
+                                                                      .redAccent))
+                                                        ],
+                                                      )
+                                                    : Text(
+                                                        'Saat Eklenmedi',
+                                                        style: TextStyle(
+                                                            color: Colors.grey,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            : Container(),
+                        SizedBox(height: 24.0),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: 8.0),
+                          child: Container(
+                              height: 50.0,
+                              width: size.width,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    if (!_hasAlarm) {
+                                      setState(() {
+                                        _date = null;
+                                        _time = null;
+                                      });
+                                    }
+                                    widget._editTask(
+                                        widget._id,
+                                        _titleController,
+                                        _noteController,
+                                        _date,
+                                        _time,
+                                        _hasAlarm);
+                                  },
+                                  child: Text('Düzenle'),
+                                  style: ElevatedButton.styleFrom(
+                                      primary: Colors.indigo))),
+                        )
                       ],
                     ),
                   ),
                 ),
-                height: size.height * 0.70,
+                height: size.height * 0.75,
               ),
             )
           ],

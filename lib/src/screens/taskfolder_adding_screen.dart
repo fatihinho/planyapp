@@ -83,8 +83,9 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                           padding: const EdgeInsets.all(16.0),
                           child: TextField(
                               controller: _folderNameController,
-                              decoration:
-                                  InputDecoration(labelText: 'Klasör Adı')),
+                              decoration: InputDecoration(
+                                  labelText: 'Klasör Adı',
+                                  border: OutlineInputBorder())),
                         ),
                         SizedBox(height: 24.0),
                         Column(children: [
@@ -310,9 +311,12 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(
-                                      color: _isPrivate
-                                          ? Colors.grey.shade200
-                                          : Colors.green.shade400,
+                                      decoration: BoxDecoration(
+                                          color: _isPrivate
+                                              ? Colors.grey.shade200
+                                              : Colors.green.shade400,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(90.0))),
                                       height: 50.0,
                                       width: size.width * 0.4,
                                       child:
@@ -328,46 +332,63 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(
-                                      color: _isPrivate
-                                          ? Colors.red.shade400
-                                          : Colors.grey.shade200,
+                                      decoration: BoxDecoration(
+                                          color: _isPrivate
+                                              ? Colors.red.shade400
+                                              : Colors.grey.shade200,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(90.0))),
                                       height: 50.0,
                                       width: size.width * 0.4,
                                       child: Center(child: Icon(Icons.lock))),
                                 ),
                               )
                             ]),
+                        SizedBox(height: 12.0),
                         _isPrivate
                             ? Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: TextField(
                                     obscureText: true,
                                     controller: _passwordController,
-                                    decoration:
-                                        InputDecoration(labelText: 'Şifre')),
+                                    decoration: InputDecoration(
+                                        labelText: 'Şifre',
+                                        border: OutlineInputBorder())),
                               )
                             : Container(),
-                        SizedBox(height: 48.0),
-                        Container(
-                            height: 50.0,
-                            width: size.width,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if (_folderNameController.text.isNotEmpty) {
-                                  if (!_isPrivate ||
-                                      (_isPrivate &&
-                                          _passwordController
-                                              .text.isNotEmpty)) {
-                                    _firestoreService.addTaskFolder(
-                                      UniqueKey().hashCode,
-                                      _folderNameController.text,
-                                      ColorsUtil.colorValueToName(ColorsUtil
-                                          .boxColors[_selectedBoxIndex].value),
-                                      _isPrivate,
-                                      _passwordController.text,
-                                      0,
-                                    );
-                                    Navigator.of(context).pop();
+                        SizedBox(height: 24.0),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: 8.0),
+                          child: Container(
+                              height: 50.0,
+                              width: size.width,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (_folderNameController.text.isNotEmpty) {
+                                    if (!_isPrivate ||
+                                        (_isPrivate &&
+                                            _passwordController
+                                                .text.isNotEmpty)) {
+                                      _firestoreService.addTaskFolder(
+                                        UniqueKey().hashCode,
+                                        _folderNameController.text,
+                                        ColorsUtil.colorValueToName(ColorsUtil
+                                            .boxColors[_selectedBoxIndex]
+                                            .value),
+                                        _isPrivate,
+                                        _passwordController.text,
+                                        0,
+                                      );
+                                      Navigator.of(context).pop();
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              backgroundColor:
+                                                  Colors.orangeAccent,
+                                              content:
+                                                  Text('Eksik Alan Mevcut!')));
+                                    }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
@@ -376,22 +397,17 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                             content:
                                                 Text('Eksik Alan Mevcut!')));
                                   }
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          backgroundColor: Colors.orangeAccent,
-                                          content: Text('Eksik Alan Mevcut!')));
-                                }
-                              },
-                              child: Text('Oluştur'),
-                              style: ElevatedButton.styleFrom(
-                                  primary: Colors.cyan),
-                            ))
+                                },
+                                child: Text('Oluştur'),
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.cyan),
+                              )),
+                        )
                       ],
                     ),
                   ),
                 ),
-                height: size.height * 0.70,
+                height: size.height * 0.75,
               ),
             )
           ],

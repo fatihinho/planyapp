@@ -95,54 +95,106 @@ class _TaskScreenState extends State<TaskScreen> {
     TextEditingController noteController,
     DateTime? date,
     TimeOfDay? time,
+    bool hasAlarm,
     TaskProvider taskProvider,
   ) async {
-    if (titleController.text.trim().isNotEmpty ||
-        noteController.text.trim().isNotEmpty) {
-      await _firestoreService.addTask(
-          UniqueKey().hashCode,
-          titleController.text,
-          noteController.text,
-          date?.day.toString(),
-          date?.month.toString(),
-          date?.year.toString(),
-          time?.hour.toString(),
-          time?.minute.toString(),
-          false,
-          widget._folderId);
-      taskProvider.increaseTotalTaskCount();
-      Navigator.of(context).pop(true);
+    if (hasAlarm) {
+      if (date != null &&
+          time != null &&
+          (titleController.text.trim().isNotEmpty ||
+              noteController.text.trim().isNotEmpty)) {
+        await _firestoreService.addTask(
+            UniqueKey().hashCode,
+            titleController.text,
+            noteController.text,
+            date.day.toString(),
+            date.month.toString(),
+            date.year.toString(),
+            time.hour.toString(),
+            time.minute.toString(),
+            hasAlarm,
+            false,
+            widget._folderId);
+        taskProvider.increaseTotalTaskCount();
+        Navigator.of(context).pop(true);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orangeAccent,
+            content: Text('Eksik Alan Mevcut!')));
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.orangeAccent,
-          content: Text('Eksik Alan Mevcut!')));
+      if (titleController.text.trim().isNotEmpty ||
+          noteController.text.trim().isNotEmpty) {
+        await _firestoreService.addTask(
+            UniqueKey().hashCode,
+            titleController.text,
+            noteController.text,
+            date?.day.toString(),
+            date?.month.toString(),
+            date?.year.toString(),
+            time?.hour.toString(),
+            time?.minute.toString(),
+            hasAlarm,
+            false,
+            widget._folderId);
+        taskProvider.increaseTotalTaskCount();
+        Navigator.of(context).pop(true);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orangeAccent,
+            content: Text('Eksik Alan Mevcut!')));
+      }
     }
     setState(() {});
   }
 
   void _editTask(
-    String id,
-    TextEditingController titleController,
-    TextEditingController noteController,
-    DateTime? date,
-    TimeOfDay? time,
-  ) async {
-    if (titleController.text.trim().isNotEmpty ||
-        noteController.text.trim().isNotEmpty) {
-      _firestoreService.editTask(
-          id,
-          titleController.text,
-          noteController.text,
-          date?.day.toString(),
-          date?.month.toString(),
-          date?.year.toString(),
-          time?.hour.toString(),
-          time?.minute.toString());
-      Navigator.of(context).pop(true);
+      String id,
+      TextEditingController titleController,
+      TextEditingController noteController,
+      DateTime? date,
+      TimeOfDay? time,
+      bool hasAlarm) async {
+    if (hasAlarm) {
+      if (date != null &&
+          time != null &&
+          (titleController.text.trim().isNotEmpty ||
+              noteController.text.trim().isNotEmpty)) {
+        _firestoreService.editTask(
+            id,
+            titleController.text,
+            noteController.text,
+            date.day.toString(),
+            date.month.toString(),
+            date.year.toString(),
+            time.hour.toString(),
+            time.minute.toString(),
+            hasAlarm);
+        Navigator.of(context).pop(true);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orangeAccent,
+            content: Text('Eksik Alan Mevcut!')));
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.orangeAccent,
-          content: Text('Eksik Alan Mevcut!')));
+      if (titleController.text.trim().isNotEmpty ||
+          noteController.text.trim().isNotEmpty) {
+        _firestoreService.editTask(
+            id,
+            titleController.text,
+            noteController.text,
+            date?.day.toString(),
+            date?.month.toString(),
+            date?.year.toString(),
+            time?.hour.toString(),
+            time?.minute.toString(),
+            hasAlarm);
+        Navigator.of(context).pop(true);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.orangeAccent,
+            content: Text('Eksik Alan Mevcut!')));
+      }
     }
     setState(() {});
   }
@@ -241,8 +293,14 @@ class _TaskScreenState extends State<TaskScreen> {
                               if (tasks[index].get('folderId') ==
                                   widget._folderId) {
                                 if (_searchController.text.isEmpty) {
-                                  return TaskList(index, _searchTyped, tasks,
-                                      _onTaskCompleted, _deleteTask, _editTask);
+                                  return TaskList(
+                                      index,
+                                      _searchTyped,
+                                      tasks[index].get('hasAlarm'),
+                                      tasks,
+                                      _onTaskCompleted,
+                                      _deleteTask,
+                                      _editTask);
                                 } else if (tasks[index]
                                         .get('title')
                                         .toLowerCase()
@@ -253,8 +311,14 @@ class _TaskScreenState extends State<TaskScreen> {
                                         .toLowerCase()
                                         .contains(_searchController.text
                                             .toLowerCase())) {
-                                  return TaskList(index, _searchTyped, tasks,
-                                      _onTaskCompleted, _deleteTask, _editTask);
+                                  return TaskList(
+                                      index,
+                                      _searchTyped,
+                                      tasks[index].get('hasAlarm'),
+                                      tasks,
+                                      _onTaskCompleted,
+                                      _deleteTask,
+                                      _editTask);
                                 } else {
                                   return Container();
                                 }

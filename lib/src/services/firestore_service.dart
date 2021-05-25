@@ -71,6 +71,7 @@ class FirestoreService {
       String? year,
       String? hour,
       String? minute,
+      bool hasAlarm,
       bool isCompleted,
       int folderId) async {
     var taskFolder = await _users
@@ -92,6 +93,7 @@ class FirestoreService {
           'year': year,
           'hour': hour,
           'minute': minute,
+          'hasAlarm': hasAlarm,
           'isCompleted': isCompleted,
           'folderId': folderId
         })
@@ -115,8 +117,16 @@ class FirestoreService {
     }).catchError((e) => throw e.toString());
   }
 
-  Future<void> editTask(String id, String? title, String? note, String? day,
-      String? month, String? year, String? hour, String? minute) async {
+  Future<void> editTask(
+      String id,
+      String? title,
+      String? note,
+      String? day,
+      String? month,
+      String? year,
+      String? hour,
+      String? minute,
+      bool hasAlarm) async {
     await _users.doc(_authService.userUID).collection('task').doc(id).update({
       'title': title,
       'note': note,
@@ -125,6 +135,7 @@ class FirestoreService {
       'year': year,
       'hour': hour,
       'minute': minute,
+      'hasAlarm': hasAlarm
     }).catchError((e) => throw e.toString());
   }
 

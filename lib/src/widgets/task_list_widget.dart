@@ -9,11 +9,12 @@ import 'package:provider/provider.dart';
 class TaskList extends StatefulWidget {
   final int _index;
   final bool _isSearchBarOpen;
+  final bool _hasAlarm;
   final List<DocumentSnapshot> _tasks;
   final Function _onTaskCompleted;
   final Function _deleteTask;
   final Function _editTask;
-  TaskList(this._index, this._isSearchBarOpen, this._tasks,
+  TaskList(this._index, this._isSearchBarOpen, this._hasAlarm, this._tasks,
       this._onTaskCompleted, this._deleteTask, this._editTask);
 
   @override
@@ -21,10 +22,10 @@ class TaskList extends StatefulWidget {
 }
 
 class _TaskListState extends State<TaskList> {
-  Route _navigateToTaskEditing(String id, Function editTask) {
+  Route _navigateToTaskEditing(String id, bool hasAlarm, Function editTask) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
-          TaskEditingScreen(id, editTask),
+          TaskEditingScreen(id, hasAlarm, editTask),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = Offset(-1.0, 0.0);
         var end = Offset.zero;
@@ -89,7 +90,7 @@ class _TaskListState extends State<TaskList> {
           false;
     } else if (direction == DismissDirection.startToEnd) {
       Navigator.of(context).push(_navigateToTaskEditing(
-          widget._tasks[widget._index].id, widget._editTask));
+          widget._tasks[widget._index].id, widget._hasAlarm, widget._editTask));
     }
     return false;
   }
