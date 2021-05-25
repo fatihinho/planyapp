@@ -120,17 +120,70 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                           child: Column(children: [
                             TextField(
                                 controller: _titleController,
+                                onChanged: (value) {
+                                  setState(() {});
+                                },
+                                cursorColor: Colors.cyan,
                                 decoration: InputDecoration(
-                                    labelText: 'Başlık',
-                                    border: OutlineInputBorder())),
+                                    prefixIcon:
+                                        Icon(Icons.topic, color: Colors.cyan),
+                                    suffixIcon: _titleController.text.isNotEmpty
+                                        ? GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _titleController.text = '';
+                                              });
+                                            },
+                                            child: Icon(Icons.close,
+                                                color: Colors.cyan))
+                                        : null,
+                                    hintText: 'Başlık',
+                                    filled: true,
+                                    fillColor: Colors.grey.shade200,
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(30.0)),
+                                        borderSide: BorderSide(
+                                            color: Colors.transparent)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(30.0)),
+                                        borderSide: BorderSide(
+                                            width: 1.5, color: Colors.cyan)))),
                             SizedBox(height: 16.0),
                             TextField(
                                 maxLines: null,
                                 keyboardType: TextInputType.multiline,
                                 controller: _noteController,
+                                onChanged: (value) {
+                                  setState(() {});
+                                },
                                 decoration: InputDecoration(
-                                    labelText: 'Not',
-                                    border: OutlineInputBorder())),
+                                    prefixIcon:
+                                        Icon(Icons.notes, color: Colors.cyan),
+                                    suffixIcon: _noteController.text.isNotEmpty
+                                        ? GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _noteController.text = '';
+                                              });
+                                            },
+                                            child: Icon(Icons.close,
+                                                color: Colors.cyan))
+                                        : null,
+                                    hintText: 'Not',
+                                    filled: true,
+                                    fillColor: Colors.grey.shade200,
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(30.0)),
+                                        borderSide: BorderSide(
+                                            color: Colors.transparent)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(30.0)),
+                                        borderSide: BorderSide(
+                                            width: 1.5, color: Colors.cyan)))),
                           ]),
                         ),
                         SizedBox(height: 12.0),
@@ -150,6 +203,8 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                           color: _hasAlarm
                                               ? Colors.grey.shade200
                                               : Colors.red.shade400,
+                                          border: Border.all(
+                                              color: Colors.black, width: 3.0),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(90.0))),
                                       height: 50.0,
@@ -171,6 +226,8 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                           color: _hasAlarm
                                               ? Colors.cyan.shade400
                                               : Colors.grey.shade200,
+                                          border: Border.all(
+                                              color: Colors.black, width: 3.0),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(90.0))),
                                       height: 50.0,
@@ -186,7 +243,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   children: [
-                                    InkWell(
+                                    GestureDetector(
                                       onTap: () {
                                         _selectDate(context);
                                       },
@@ -258,7 +315,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                       ),
                                     ),
                                     SizedBox(height: 8.0),
-                                    InkWell(
+                                    GestureDetector(
                                       onTap: () {
                                         _selectTime(context);
                                       },
@@ -363,7 +420,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                   },
                                   child: Text('Oluştur'),
                                   style: ElevatedButton.styleFrom(
-                                      primary: Colors.indigo))),
+                                      primary: Colors.cyan))),
                         )
                       ],
                     ),

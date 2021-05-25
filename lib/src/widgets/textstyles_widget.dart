@@ -5,13 +5,13 @@ class TasksTextStyles {
       Icon(Icons.radio_button_off, size: 36.0);
   static Icon get completedTaskLeading => Icon(
         Icons.check_circle,
-        color: Colors.cyan,
+        color: Colors.indigo,
         size: 36.0,
       );
   static TextStyle get uncompletedTitleTextStyle => TextStyle(
       fontSize: 18.0,
       fontWeight: FontWeight.bold,
-      color: Colors.blueGrey.shade800,
+      color: Colors.red.shade400,
       decoration: TextDecoration.none);
   static TextStyle get completedTitleTextStyle => TextStyle(
       fontSize: 18.0,
@@ -19,15 +19,19 @@ class TasksTextStyles {
       color: Colors.grey,
       decoration: TextDecoration.lineThrough);
   static TextStyle get uncompletedNoteStyle =>
-      TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey.shade400);
+      TextStyle(fontWeight: FontWeight.bold, color: Colors.teal.shade800);
   static TextStyle get completedNoteStyle => TextStyle(
       fontWeight: FontWeight.bold,
       color: Colors.grey,
       decoration: TextDecoration.lineThrough);
   static TextStyle get uncompletedDateTimeStyle =>
-      TextStyle(fontWeight: FontWeight.bold, color: Colors.brown);
+      TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo);
   static TextStyle get completedDateTimeStyle => TextStyle(
       fontWeight: FontWeight.bold,
       color: Colors.grey,
       decoration: TextDecoration.lineThrough);
+  static Icon get uncompletedAlarmIcon =>
+      Icon(Icons.alarm, color: Colors.indigo, size: 20.0);
+  static Icon get completedAlarmIcon =>
+      Icon(Icons.alarm, color: Colors.grey, size: 20.0);
 }

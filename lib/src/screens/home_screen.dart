@@ -174,25 +174,38 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (_) => AlertDialog(
                                 title: Row(
                                   children: [
-                                    Icon(Icons.edit,
-                                        color: Colors.orange.shade400),
+                                    Icon(Icons.edit, color: Colors.orange),
                                     SizedBox(width: 4.0),
                                     Text('İsim Düzenle'),
                                   ],
                                 ),
                                 content: TextField(
-                                    cursorColor: Colors.orange.shade400,
+                                    controller: _nameController,
+                                    cursorColor: Colors.orange,
                                     decoration: InputDecoration(
-                                      focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Colors.orange.shade400)),
-                                    ),
-                                    controller: _nameController),
+                                        hintText: 'Yeni İsim',
+                                        filled: true,
+                                        fillColor: Colors.grey.shade200,
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(30.0)),
+                                            borderSide: BorderSide(
+                                                color: Colors.transparent)),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(30.0)),
+                                            borderSide: BorderSide(
+                                                width: 1.5,
+                                                color: Colors.orange)))),
                                 actions: [
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        primary: Colors.redAccent),
-                                    child: Text('İptal'),
+                                  TextButton(
+                                    style: TextButton.styleFrom(
+                                        primary: Colors.red),
+                                    child: Text(
+                                      'İptal',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                     onPressed: () {
                                       Navigator.of(context).pop(false);
                                       _nameController.clear();
@@ -269,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemBuilder: (context, index) {
                                 return Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: InkWell(
+                                  child: GestureDetector(
                                     onTap: () {
                                       if (!taskFolders[index]
                                           .get('isPrivate')) {
@@ -375,14 +388,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                       showDialog(
                                           context: context,
                                           builder: (_) => AlertDialog(
-                                                title: Text(
-                                                    "Klasör'ü silmek istediğinden emin misin?"),
+                                                title: Row(
+                                                  children: [
+                                                    Icon(
+                                                        Icons
+                                                            .warning_amber_rounded,
+                                                        color: Colors.red),
+                                                    SizedBox(width: 2.0),
+                                                    Text("Uyarı",
+                                                        style: TextStyle(
+                                                            color: Colors.red,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
+                                                  ],
+                                                ),
+                                                content: Text(
+                                                    "Klasör'ü silmek istediğinden emin misin?",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold)),
                                                 actions: [
-                                                  ElevatedButton(
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                            primary: Colors
-                                                                .redAccent),
+                                                  TextButton(
                                                     child: Text('İptal'),
                                                     onPressed: () {
                                                       Navigator.of(context)
@@ -390,6 +417,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     },
                                                   ),
                                                   ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                            primary:
+                                                                Colors.red),
                                                     child: Text('Sil'),
                                                     onPressed: () {
                                                       _firestoreService

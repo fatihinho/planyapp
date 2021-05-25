@@ -329,7 +329,7 @@ class _TaskScreenState extends State<TaskScreen> {
                       } else {
                         return Center(
                           child: Icon(
-                            Icons.add,
+                            Icons.notes,
                             size: 148.0,
                             color: Colors.indigo.shade200,
                           ),

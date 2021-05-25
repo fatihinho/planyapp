@@ -100,14 +100,14 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
     return Scaffold(
         appBar: AppBar(
           elevation: 0.0,
-          backgroundColor: Colors.cyan,
+          backgroundColor: Colors.orange,
         ),
         body: Stack(
           children: [
             Container(
               width: size.width,
               height: size.height,
-              color: Colors.cyan,
+              color: Colors.orange,
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -149,17 +149,73 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
                           child: Column(children: [
                             TextField(
                                 controller: _titleController,
+                                cursorColor: Colors.orange,
+                                onChanged: (value) {
+                                  setState(() {});
+                                },
                                 decoration: InputDecoration(
-                                    labelText: 'Başlık',
-                                    border: OutlineInputBorder())),
+                                    prefixIcon:
+                                        Icon(Icons.topic, color: Colors.orange),
+                                    suffixIcon: _titleController.text.isNotEmpty
+                                        ? GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _titleController.text = '';
+                                              });
+                                            },
+                                            child: Icon(Icons.close,
+                                                color: Colors.orange))
+                                        : null,
+                                    hintText: 'Başlık',
+                                    filled: true,
+                                    fillColor: Colors.grey.shade200,
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(30.0)),
+                                        borderSide: BorderSide(
+                                            color: Colors.transparent)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(30.0)),
+                                        borderSide: BorderSide(
+                                            width: 1.5,
+                                            color: Colors.orange)))),
                             SizedBox(height: 16.0),
                             TextField(
                                 maxLines: null,
                                 keyboardType: TextInputType.multiline,
                                 controller: _noteController,
+                                cursorColor: Colors.orange,
+                                onChanged: (value) {
+                                  setState(() {});
+                                },
                                 decoration: InputDecoration(
-                                    labelText: 'Not',
-                                    border: OutlineInputBorder())),
+                                    prefixIcon:
+                                        Icon(Icons.notes, color: Colors.orange),
+                                    suffixIcon: _noteController.text.isNotEmpty
+                                        ? GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _noteController.text = '';
+                                              });
+                                            },
+                                            child: Icon(Icons.close,
+                                                color: Colors.orange))
+                                        : null,
+                                    hintText: 'Not',
+                                    filled: true,
+                                    fillColor: Colors.grey.shade200,
+                                    enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(30.0)),
+                                        borderSide: BorderSide(
+                                            color: Colors.transparent)),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(30.0)),
+                                        borderSide: BorderSide(
+                                            width: 1.5,
+                                            color: Colors.orange)))),
                           ]),
                         ),
                         SizedBox(height: 12.0),
@@ -179,6 +235,8 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
                                           color: _hasAlarm
                                               ? Colors.grey.shade200
                                               : Colors.red.shade400,
+                                          border: Border.all(
+                                              color: Colors.black, width: 3.0),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(90.0))),
                                       height: 50.0,
@@ -200,6 +258,8 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
                                           color: _hasAlarm
                                               ? Colors.cyan.shade400
                                               : Colors.grey.shade200,
+                                          border: Border.all(
+                                              color: Colors.black, width: 3.0),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(90.0))),
                                       height: 50.0,
@@ -215,7 +275,7 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   children: [
-                                    InkWell(
+                                    GestureDetector(
                                       onTap: () {
                                         _selectDate(context);
                                       },
@@ -287,7 +347,7 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
                                       ),
                                     ),
                                     SizedBox(height: 8.0),
-                                    InkWell(
+                                    GestureDetector(
                                       onTap: () {
                                         _selectTime(context);
                                       },
@@ -392,7 +452,7 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
                                   },
                                   child: Text('Düzenle'),
                                   style: ElevatedButton.styleFrom(
-                                      primary: Colors.indigo))),
+                                      primary: Colors.orange))),
                         )
                       ],
                     ),

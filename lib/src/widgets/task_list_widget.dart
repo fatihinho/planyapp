@@ -42,9 +42,11 @@ class _TaskListState extends State<TaskList> {
 
   Widget _deleteBackground() {
     return Container(
+      decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.all(Radius.circular(30.0))),
       alignment: Alignment.centerRight,
       padding: EdgeInsets.only(right: 20.0),
-      color: Colors.red,
       child: Icon(
         Icons.delete,
         color: Colors.white,
@@ -54,9 +56,11 @@ class _TaskListState extends State<TaskList> {
 
   Widget _editBackground() {
     return Container(
+      decoration: BoxDecoration(
+          color: Colors.orange,
+          borderRadius: BorderRadius.all(Radius.circular(30.0))),
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.only(left: 20.0),
-      color: Colors.orange,
       child: Icon(
         Icons.edit,
         color: Colors.white,
@@ -70,17 +74,27 @@ class _TaskListState extends State<TaskList> {
       return await showDialog<bool>(
               context: context,
               builder: (_) => AlertDialog(
-                    title: Text("Not'u silmek istediğinden emin misin?"),
+                    title: Row(
+                      children: [
+                        Icon(Icons.warning_amber_rounded, color: Colors.red),
+                        SizedBox(width: 2.0),
+                        Text("Uyarı",
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    content: Text("Not'u silmek istediğinden emin misin?",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                     actions: [
-                      ElevatedButton(
-                        style:
-                            ElevatedButton.styleFrom(primary: Colors.redAccent),
+                      TextButton(
                         child: Text('İptal'),
                         onPressed: () {
                           Navigator.of(context).pop(false);
                         },
                       ),
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: Colors.red),
                         child: Text('Sil'),
                         onPressed: () => widget._deleteTask(
                             widget._tasks, widget._index, taskProvider),
@@ -99,52 +113,59 @@ class _TaskListState extends State<TaskList> {
   Widget build(BuildContext context) {
     final taskProvider = Provider.of<TaskProvider>(context);
 
-    return Dismissible(
-      key: Key(widget._tasks[widget._index].id),
-      background: _editBackground(),
-      secondaryBackground: _deleteBackground(),
-      direction: widget._isSearchBarOpen
-          ? DismissDirection.none
-          : DismissDirection.horizontal,
-      confirmDismiss: (direction) => promptUser(direction, taskProvider),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListTile(
-          leading: GestureDetector(
-              onTap: () =>
-                  widget._onTaskCompleted(widget._tasks, widget._index),
-              child: widget._tasks[widget._index].get('isCompleted')
-                  ? TasksTextStyles.completedTaskLeading
-                  : TasksTextStyles.uncompletedTaskLeading),
-          title: Text(
-            '${widget._tasks[widget._index].get('title')}',
-            style: widget._tasks[widget._index].get('isCompleted')
-                ? TasksTextStyles.completedTitleTextStyle
-                : TasksTextStyles.uncompletedTitleTextStyle,
-          ),
-          subtitle: Text('${widget._tasks[widget._index].get('note')}',
+    return Card(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30.0))),
+      elevation: 5.0,
+      child: Dismissible(
+        key: Key(widget._tasks[widget._index].id),
+        background: _editBackground(),
+        secondaryBackground: _deleteBackground(),
+        direction: widget._isSearchBarOpen
+            ? DismissDirection.none
+            : DismissDirection.horizontal,
+        confirmDismiss: (direction) => promptUser(direction, taskProvider),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListTile(
+            leading: GestureDetector(
+                onTap: () =>
+                    widget._onTaskCompleted(widget._tasks, widget._index),
+                child: widget._tasks[widget._index].get('isCompleted')
+                    ? TasksTextStyles.completedTaskLeading
+                    : TasksTextStyles.uncompletedTaskLeading),
+            title: Text(
+              '${widget._tasks[widget._index].get('title')}',
               style: widget._tasks[widget._index].get('isCompleted')
-                  ? TasksTextStyles.completedNoteStyle
-                  : TasksTextStyles.uncompletedNoteStyle),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              widget._tasks[widget._index].get('year') != null
-                  ? Text(
-                      '${DateTimeFormat.formatDate(widget._tasks[widget._index].get('day'))}/${DateTimeFormat.formatDate(widget._tasks[widget._index].get('month'))}/${widget._tasks[widget._index].get('year')}',
-                      style: widget._tasks[widget._index].get('isCompleted')
-                          ? TasksTextStyles.completedDateTimeStyle
-                          : TasksTextStyles.uncompletedDateTimeStyle)
-                  : Text(''),
-              widget._tasks[widget._index].get('hour') != null
-                  ? Text(
-                      '${DateTimeFormat.formatTime(widget._tasks[widget._index].get('hour'))}:${DateTimeFormat.formatTime(widget._tasks[widget._index].get('minute'))}',
-                      style: widget._tasks[widget._index].get('isCompleted')
-                          ? TasksTextStyles.completedDateTimeStyle
-                          : TasksTextStyles.uncompletedDateTimeStyle)
-                  : Text(''),
-            ],
+                  ? TasksTextStyles.completedTitleTextStyle
+                  : TasksTextStyles.uncompletedTitleTextStyle,
+            ),
+            subtitle: Text('${widget._tasks[widget._index].get('note')}',
+                style: widget._tasks[widget._index].get('isCompleted')
+                    ? TasksTextStyles.completedNoteStyle
+                    : TasksTextStyles.uncompletedNoteStyle),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                widget._tasks[widget._index].get('isCompleted')
+                    ? TasksTextStyles.completedAlarmIcon
+                    : TasksTextStyles.uncompletedAlarmIcon,
+                widget._tasks[widget._index].get('year') != null
+                    ? Text(
+                        '${DateTimeFormat.formatDate(widget._tasks[widget._index].get('day'))}/${DateTimeFormat.formatDate(widget._tasks[widget._index].get('month'))}/${widget._tasks[widget._index].get('year')}',
+                        style: widget._tasks[widget._index].get('isCompleted')
+                            ? TasksTextStyles.completedDateTimeStyle
+                            : TasksTextStyles.uncompletedDateTimeStyle)
+                    : Text(''),
+                widget._tasks[widget._index].get('hour') != null
+                    ? Text(
+                        '${DateTimeFormat.formatTime(widget._tasks[widget._index].get('hour'))}:${DateTimeFormat.formatTime(widget._tasks[widget._index].get('minute'))}',
+                        style: widget._tasks[widget._index].get('isCompleted')
+                            ? TasksTextStyles.completedDateTimeStyle
+                            : TasksTextStyles.uncompletedDateTimeStyle)
+                    : Text(''),
+              ],
+            ),
           ),
         ),
       ),

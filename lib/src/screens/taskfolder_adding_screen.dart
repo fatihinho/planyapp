@@ -83,11 +83,39 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                           padding: const EdgeInsets.all(16.0),
                           child: TextField(
                               controller: _folderNameController,
+                              cursorColor: Colors.indigo,
+                              onChanged: (value) {
+                                setState(() {});
+                              },
                               decoration: InputDecoration(
-                                  labelText: 'Klasör Adı',
-                                  border: OutlineInputBorder())),
+                                  prefixIcon:
+                                      Icon(Icons.topic, color: Colors.indigo),
+                                  suffixIcon: _folderNameController
+                                          .text.isNotEmpty
+                                      ? GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _folderNameController.text = '';
+                                            });
+                                          },
+                                          child: Icon(Icons.close,
+                                              color: Colors.indigo))
+                                      : null,
+                                  hintText: 'Klasör Adı',
+                                  filled: true,
+                                  fillColor: Colors.grey.shade200,
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(30.0)),
+                                      borderSide: BorderSide(
+                                          color: Colors.transparent)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(30.0)),
+                                      borderSide: BorderSide(
+                                          width: 1.5, color: Colors.indigo)))),
                         ),
-                        SizedBox(height: 24.0),
+                        SizedBox(height: 12.0),
                         Column(children: [
                           Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -315,6 +343,8 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                           color: _isPrivate
                                               ? Colors.grey.shade200
                                               : Colors.green.shade400,
+                                          border: Border.all(
+                                              color: Colors.black, width: 3.0),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(90.0))),
                                       height: 50.0,
@@ -336,6 +366,8 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                           color: _isPrivate
                                               ? Colors.red.shade400
                                               : Colors.grey.shade200,
+                                          border: Border.all(
+                                              color: Colors.black, width: 3.0),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(90.0))),
                                       height: 50.0,
@@ -349,11 +381,40 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                             ? Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: TextField(
-                                    obscureText: true,
                                     controller: _passwordController,
+                                    cursorColor: Colors.indigo,
+                                    onChanged: (value) {
+                                      setState(() {});
+                                    },
                                     decoration: InputDecoration(
-                                        labelText: 'Şifre',
-                                        border: OutlineInputBorder())),
+                                        prefixIcon: Icon(Icons.lock,
+                                            color: Colors.indigo),
+                                        suffixIcon: _passwordController
+                                                .text.isNotEmpty
+                                            ? GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _passwordController.text =
+                                                        '';
+                                                  });
+                                                },
+                                                child: Icon(Icons.close,
+                                                    color: Colors.indigo))
+                                            : null,
+                                        hintText: 'Şifre',
+                                        filled: true,
+                                        fillColor: Colors.grey.shade200,
+                                        enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(30.0)),
+                                            borderSide: BorderSide(
+                                                color: Colors.transparent)),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(30.0)),
+                                            borderSide: BorderSide(
+                                                width: 1.5,
+                                                color: Colors.indigo)))),
                               )
                             : Container(),
                         SizedBox(height: 24.0),
@@ -400,7 +461,7 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                 },
                                 child: Text('Oluştur'),
                                 style: ElevatedButton.styleFrom(
-                                    primary: Colors.cyan),
+                                    primary: Colors.indigo),
                               )),
                         )
                       ],
