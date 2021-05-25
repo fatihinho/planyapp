@@ -207,7 +207,7 @@ class _TaskScreenState extends State<TaskScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.redAccent,
-        content: Text('Plan Silindi'),
+        content: Text('Not Silindi'),
       ),
     );
     setState(() {});
@@ -295,6 +295,7 @@ class _TaskScreenState extends State<TaskScreen> {
                                 if (_searchController.text.isEmpty) {
                                   return TaskList(
                                       index,
+                                      widget._color,
                                       _searchTyped,
                                       tasks[index].get('hasAlarm'),
                                       tasks,
@@ -313,6 +314,7 @@ class _TaskScreenState extends State<TaskScreen> {
                                             .toLowerCase())) {
                                   return TaskList(
                                       index,
+                                      widget._color,
                                       _searchTyped,
                                       tasks[index].get('hasAlarm'),
                                       tasks,
@@ -329,7 +331,7 @@ class _TaskScreenState extends State<TaskScreen> {
                       } else {
                         return Center(
                           child: Icon(
-                            Icons.notes,
+                            Icons.topic,
                             size: 148.0,
                             color: Colors.indigo.shade200,
                           ),
@@ -343,11 +345,9 @@ class _TaskScreenState extends State<TaskScreen> {
         ],
       ),
       floatingActionButton: Container(
-        width: 72.0,
-        height: 72.0,
         child: FloatingActionButton(
           backgroundColor: Colors.cyan,
-          child: Icon(Icons.add, size: 48.0),
+          child: Icon(Icons.add),
           onPressed: () {
             Navigator.of(context)
                 .push(_navigateToTaskAdding(widget._folderId, _addTask));

@@ -513,7 +513,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Icon(
                                 Icons.create_new_folder,
                                 size: 148.0,
-                                color: Colors.cyan.shade200,
+                                color: Colors.indigo.shade200,
                               ),
                             );
                           }

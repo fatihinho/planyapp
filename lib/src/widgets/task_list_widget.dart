@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:planyapp/src/providers/task_provider.dart';
+import 'package:planyapp/src/screens/task_detail_screen.dart';
 import 'package:planyapp/src/screens/task_editing_screen.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
 import 'package:planyapp/src/widgets/textstyles_widget.dart';
@@ -8,14 +9,15 @@ import 'package:provider/provider.dart';
 
 class TaskList extends StatefulWidget {
   final int _index;
+  final String _color;
   final bool _isSearchBarOpen;
   final bool _hasAlarm;
   final List<DocumentSnapshot> _tasks;
   final Function _onTaskCompleted;
   final Function _deleteTask;
   final Function _editTask;
-  TaskList(this._index, this._isSearchBarOpen, this._hasAlarm, this._tasks,
-      this._onTaskCompleted, this._deleteTask, this._editTask);
+  TaskList(this._index, this._color, this._isSearchBarOpen, this._hasAlarm,
+      this._tasks, this._onTaskCompleted, this._deleteTask, this._editTask);
 
   @override
   _TaskListState createState() => _TaskListState();
@@ -28,6 +30,25 @@ class _TaskListState extends State<TaskList> {
           TaskEditingScreen(id, hasAlarm, editTask),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = Offset(-1.0, 0.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+  Route _navigateToTaskDetail(int index, String color, Function editTask,
+      Function deleteTask, List<DocumentSnapshot> tasks) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          TaskDetailScreen(index, color, editTask, deleteTask, tasks),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(0.0, -1.0);
         var end = Offset.zero;
         var curve = Curves.ease;
         var tween =
@@ -127,53 +148,78 @@ class _TaskListState extends State<TaskList> {
         confirmDismiss: (direction) => promptUser(direction, taskProvider),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ListTile(
-            leading: GestureDetector(
-                onTap: () =>
-                    widget._onTaskCompleted(widget._tasks, widget._index),
-                child: widget._tasks[widget._index].get('isCompleted')
-                    ? TasksTextStyles.completedTaskLeading
-                    : TasksTextStyles.uncompletedTaskLeading),
-            title: widget._tasks[widget._index].get('title').trim().isNotEmpty
-                ? Text(
-                    '${widget._tasks[widget._index].get('title')}',
-                    style: widget._tasks[widget._index].get('isCompleted')
-                        ? TasksTextStyles.completedTitleTextStyle
-                        : TasksTextStyles.uncompletedTitleTextStyle,
-                  )
-                : null,
-            subtitle: widget._tasks[widget._index].get('note').trim().isNotEmpty
-                ? Text('${widget._tasks[widget._index].get('note')}',
-                    style: widget._tasks[widget._index].get('isCompleted')
-                        ? TasksTextStyles.completedNoteStyle
-                        : TasksTextStyles.uncompletedNoteStyle)
-                : null,
-            trailing: widget._hasAlarm
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      widget._tasks[widget._index].get('isCompleted')
-                          ? TasksTextStyles.completedAlarmIcon
-                          : TasksTextStyles.uncompletedAlarmIcon,
-                      widget._tasks[widget._index].get('year').trim().isNotEmpty
-                          ? Text(
-                              '${DateTimeFormat.formatDate(widget._tasks[widget._index].get('day'))}/${DateTimeFormat.formatDate(widget._tasks[widget._index].get('month'))}/${widget._tasks[widget._index].get('year')}',
-                              style: widget._tasks[widget._index]
-                                      .get('isCompleted')
-                                  ? TasksTextStyles.completedDateTimeStyle
-                                  : TasksTextStyles.uncompletedDateTimeStyle)
-                          : Text(''),
-                      widget._tasks[widget._index].get('hour').trim().isNotEmpty
-                          ? Text(
-                              '${DateTimeFormat.formatTime(widget._tasks[widget._index].get('hour'))}:${DateTimeFormat.formatTime(widget._tasks[widget._index].get('minute'))}',
-                              style: widget._tasks[widget._index]
-                                      .get('isCompleted')
-                                  ? TasksTextStyles.completedDateTimeStyle
-                                  : TasksTextStyles.uncompletedDateTimeStyle)
-                          : Text(''),
-                    ],
-                  )
-                : null,
+          child: Theme(
+            data: ThemeData(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
+            child: ListTile(
+              onTap: () {
+                Navigator.of(context).push(_navigateToTaskDetail(
+                    widget._index,
+                    widget._color,
+                    widget._editTask,
+                    widget._deleteTask,
+                    widget._tasks));
+              },
+              leading: GestureDetector(
+                  onTap: () =>
+                      widget._onTaskCompleted(widget._tasks, widget._index),
+                  child: widget._tasks[widget._index].get('isCompleted')
+                      ? TasksTextStyles.completedTaskLeading
+                      : TasksTextStyles.uncompletedTaskLeading),
+              title: widget._tasks[widget._index].get('title').trim().isNotEmpty
+                  ? Text(
+                      '${widget._tasks[widget._index].get('title')}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: widget._tasks[widget._index].get('isCompleted')
+                          ? TasksTextStyles.completedTitleTextStyle
+                          : TasksTextStyles.uncompletedTitleTextStyle,
+                    )
+                  : null,
+              subtitle:
+                  widget._tasks[widget._index].get('note').trim().isNotEmpty
+                      ? Text('${widget._tasks[widget._index].get('note')}',
+                          maxLines: 3,
+                          overflow: TextOverflow.fade,
+                          style: widget._tasks[widget._index].get('isCompleted')
+                              ? TasksTextStyles.completedNoteStyle
+                              : TasksTextStyles.uncompletedNoteStyle)
+                      : null,
+              trailing: widget._hasAlarm
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        widget._tasks[widget._index].get('isCompleted')
+                            ? TasksTextStyles.completedAlarmIcon
+                            : TasksTextStyles.uncompletedAlarmIcon,
+                        widget._tasks[widget._index]
+                                .get('year')
+                                .trim()
+                                .isNotEmpty
+                            ? Text(
+                                '${DateTimeFormat.formatDate(widget._tasks[widget._index].get('day'))}/${DateTimeFormat.formatDate(widget._tasks[widget._index].get('month'))}/${widget._tasks[widget._index].get('year')}',
+                                style: widget._tasks[widget._index]
+                                        .get('isCompleted')
+                                    ? TasksTextStyles.completedDateTimeStyle
+                                    : TasksTextStyles.uncompletedDateTimeStyle)
+                            : Text(''),
+                        widget._tasks[widget._index]
+                                .get('hour')
+                                .trim()
+                                .isNotEmpty
+                            ? Text(
+                                '${DateTimeFormat.formatTime(widget._tasks[widget._index].get('hour'))}:${DateTimeFormat.formatTime(widget._tasks[widget._index].get('minute'))}',
+                                style: widget._tasks[widget._index]
+                                        .get('isCompleted')
+                                    ? TasksTextStyles.completedDateTimeStyle
+                                    : TasksTextStyles.uncompletedDateTimeStyle)
+                            : Text(''),
+                      ],
+                    )
+                  : null,
+            ),
           ),
         ),
       ),
