@@ -134,38 +134,46 @@ class _TaskListState extends State<TaskList> {
                 child: widget._tasks[widget._index].get('isCompleted')
                     ? TasksTextStyles.completedTaskLeading
                     : TasksTextStyles.uncompletedTaskLeading),
-            title: Text(
-              '${widget._tasks[widget._index].get('title')}',
-              style: widget._tasks[widget._index].get('isCompleted')
-                  ? TasksTextStyles.completedTitleTextStyle
-                  : TasksTextStyles.uncompletedTitleTextStyle,
-            ),
-            subtitle: Text('${widget._tasks[widget._index].get('note')}',
-                style: widget._tasks[widget._index].get('isCompleted')
-                    ? TasksTextStyles.completedNoteStyle
-                    : TasksTextStyles.uncompletedNoteStyle),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                widget._tasks[widget._index].get('isCompleted')
-                    ? TasksTextStyles.completedAlarmIcon
-                    : TasksTextStyles.uncompletedAlarmIcon,
-                widget._tasks[widget._index].get('year') != null
-                    ? Text(
-                        '${DateTimeFormat.formatDate(widget._tasks[widget._index].get('day'))}/${DateTimeFormat.formatDate(widget._tasks[widget._index].get('month'))}/${widget._tasks[widget._index].get('year')}',
-                        style: widget._tasks[widget._index].get('isCompleted')
-                            ? TasksTextStyles.completedDateTimeStyle
-                            : TasksTextStyles.uncompletedDateTimeStyle)
-                    : Text(''),
-                widget._tasks[widget._index].get('hour') != null
-                    ? Text(
-                        '${DateTimeFormat.formatTime(widget._tasks[widget._index].get('hour'))}:${DateTimeFormat.formatTime(widget._tasks[widget._index].get('minute'))}',
-                        style: widget._tasks[widget._index].get('isCompleted')
-                            ? TasksTextStyles.completedDateTimeStyle
-                            : TasksTextStyles.uncompletedDateTimeStyle)
-                    : Text(''),
-              ],
-            ),
+            title: widget._tasks[widget._index].get('title').trim().isNotEmpty
+                ? Text(
+                    '${widget._tasks[widget._index].get('title')}',
+                    style: widget._tasks[widget._index].get('isCompleted')
+                        ? TasksTextStyles.completedTitleTextStyle
+                        : TasksTextStyles.uncompletedTitleTextStyle,
+                  )
+                : null,
+            subtitle: widget._tasks[widget._index].get('note').trim().isNotEmpty
+                ? Text('${widget._tasks[widget._index].get('note')}',
+                    style: widget._tasks[widget._index].get('isCompleted')
+                        ? TasksTextStyles.completedNoteStyle
+                        : TasksTextStyles.uncompletedNoteStyle)
+                : null,
+            trailing: widget._hasAlarm
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      widget._tasks[widget._index].get('isCompleted')
+                          ? TasksTextStyles.completedAlarmIcon
+                          : TasksTextStyles.uncompletedAlarmIcon,
+                      widget._tasks[widget._index].get('year').trim().isNotEmpty
+                          ? Text(
+                              '${DateTimeFormat.formatDate(widget._tasks[widget._index].get('day'))}/${DateTimeFormat.formatDate(widget._tasks[widget._index].get('month'))}/${widget._tasks[widget._index].get('year')}',
+                              style: widget._tasks[widget._index]
+                                      .get('isCompleted')
+                                  ? TasksTextStyles.completedDateTimeStyle
+                                  : TasksTextStyles.uncompletedDateTimeStyle)
+                          : Text(''),
+                      widget._tasks[widget._index].get('hour').trim().isNotEmpty
+                          ? Text(
+                              '${DateTimeFormat.formatTime(widget._tasks[widget._index].get('hour'))}:${DateTimeFormat.formatTime(widget._tasks[widget._index].get('minute'))}',
+                              style: widget._tasks[widget._index]
+                                      .get('isCompleted')
+                                  ? TasksTextStyles.completedDateTimeStyle
+                                  : TasksTextStyles.uncompletedDateTimeStyle)
+                          : Text(''),
+                    ],
+                  )
+                : null,
           ),
         ),
       ),

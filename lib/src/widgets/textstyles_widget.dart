@@ -11,19 +11,16 @@ class TasksTextStyles {
   static TextStyle get uncompletedTitleTextStyle => TextStyle(
       fontSize: 18.0,
       fontWeight: FontWeight.bold,
-      color: Colors.red.shade400,
+      color: Colors.indigo,
       decoration: TextDecoration.none);
   static TextStyle get completedTitleTextStyle => TextStyle(
       fontSize: 18.0,
       fontWeight: FontWeight.bold,
       color: Colors.grey,
       decoration: TextDecoration.lineThrough);
-  static TextStyle get uncompletedNoteStyle =>
-      TextStyle(fontWeight: FontWeight.bold, color: Colors.teal.shade800);
-  static TextStyle get completedNoteStyle => TextStyle(
-      fontWeight: FontWeight.bold,
-      color: Colors.grey,
-      decoration: TextDecoration.lineThrough);
+  static TextStyle get uncompletedNoteStyle => TextStyle(color: Colors.black);
+  static TextStyle get completedNoteStyle =>
+      TextStyle(color: Colors.grey, decoration: TextDecoration.lineThrough);
   static TextStyle get uncompletedDateTimeStyle =>
       TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo);
   static TextStyle get completedDateTimeStyle => TextStyle(
