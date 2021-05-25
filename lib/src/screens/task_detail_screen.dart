@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/task_editing_screen.dart';
-import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/utils/colors_util.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +20,6 @@ class TaskDetailScreen extends StatefulWidget {
 }
 
 class _TaskDetailScreenState extends State<TaskDetailScreen> {
-  final _firestoreService = FirestoreService();
-
   Route _navigateToTaskEditing(String id, bool hasAlarm, Function editTask) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
