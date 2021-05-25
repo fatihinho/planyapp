@@ -261,13 +261,14 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                                 Row(
                                                   children: [
                                                     Icon(Icons.date_range,
-                                                        color: Colors.indigo),
+                                                        color: Colors
+                                                            .indigo.shade800),
                                                     SizedBox(width: 2.0),
                                                     Text('Tarih Ekle',
                                                         style: TextStyle(
                                                             fontSize: 18.0,
-                                                            color:
-                                                                Colors.indigo,
+                                                            color: Colors.indigo
+                                                                .shade800,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold)),
@@ -282,7 +283,8 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                                                   fontSize:
                                                                       20.0,
                                                                   color: Colors
-                                                                      .indigo,
+                                                                      .indigo
+                                                                      .shade800,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold)),
@@ -294,10 +296,10 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                                                 });
                                                               },
                                                               child: Icon(
-                                                                  Icons.delete,
-                                                                  size: 20.0,
+                                                                  Icons.clear,
                                                                   color: Colors
-                                                                      .redAccent))
+                                                                      .red
+                                                                      .shade400))
                                                         ],
                                                       )
                                                     : Text(
@@ -335,14 +337,15 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                                     Row(
                                                       children: [
                                                         Icon(Icons.alarm,
-                                                            color:
-                                                                Colors.indigo),
+                                                            color: Colors.indigo
+                                                                .shade800),
                                                         SizedBox(width: 2.0),
                                                         Text('Saat Ekle',
                                                             style: TextStyle(
                                                                 fontSize: 18.0,
                                                                 color: Colors
-                                                                    .indigo,
+                                                                    .indigo
+                                                                    .shade800,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold)),
@@ -359,7 +362,8 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                                                   fontSize:
                                                                       20.0,
                                                                   color: Colors
-                                                                      .indigo,
+                                                                      .indigo
+                                                                      .shade800,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold)),
@@ -371,10 +375,10 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                                                 });
                                                               },
                                                               child: Icon(
-                                                                  Icons.delete,
-                                                                  size: 20.0,
+                                                                  Icons.clear,
                                                                   color: Colors
-                                                                      .redAccent))
+                                                                      .red
+                                                                      .shade400))
                                                         ],
                                                       )
                                                     : Text(

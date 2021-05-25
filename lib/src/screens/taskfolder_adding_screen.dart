@@ -382,13 +382,13 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                 padding: const EdgeInsets.all(16.0),
                                 child: TextField(
                                     controller: _passwordController,
-                                    cursorColor: Colors.indigo,
+                                    cursorColor: Colors.red.shade400,
                                     onChanged: (value) {
                                       setState(() {});
                                     },
                                     decoration: InputDecoration(
                                         prefixIcon: Icon(Icons.lock,
-                                            color: Colors.indigo),
+                                            color: Colors.red.shade400),
                                         suffixIcon: _passwordController
                                                 .text.isNotEmpty
                                             ? GestureDetector(
@@ -399,7 +399,7 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                                   });
                                                 },
                                                 child: Icon(Icons.close,
-                                                    color: Colors.indigo))
+                                                    color: Colors.red.shade400))
                                             : null,
                                         hintText: 'Şifre',
                                         filled: true,
@@ -414,7 +414,7 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                                 Radius.circular(30.0)),
                                             borderSide: BorderSide(
                                                 width: 1.5,
-                                                color: Colors.indigo)))),
+                                                color: Colors.red.shade400)))),
                               )
                             : Container(),
                         SizedBox(height: 24.0),
@@ -426,6 +426,11 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                               width: size.width,
                               child: ElevatedButton(
                                 onPressed: () {
+                                  if (!_isPrivate) {
+                                    setState(() {
+                                      _passwordController.text = '';
+                                    });
+                                  }
                                   if (_folderNameController.text.isNotEmpty) {
                                     if (!_isPrivate ||
                                         (_isPrivate &&
