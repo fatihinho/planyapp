@@ -381,6 +381,7 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                             ? Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: TextField(
+                                    obscureText: true,
                                     controller: _passwordController,
                                     cursorColor: Colors.red.shade400,
                                     onChanged: (value) {

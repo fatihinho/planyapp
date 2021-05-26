@@ -306,25 +306,39 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ),
                                                   content: TextField(
                                                       obscureText: true,
-                                                      cursorColor:
-                                                          Colors.redAccent,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        focusedBorder:
-                                                            UnderlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .redAccent)),
-                                                      ),
                                                       controller:
-                                                          _passwordController),
+                                                          _passwordController,
+                                                      cursorColor:
+                                                          Colors.red.shade400,
+                                                      decoration: InputDecoration(
+                                                          hintText: 'Şifre',
+                                                          filled: true,
+                                                          fillColor: Colors
+                                                              .grey.shade200,
+                                                          enabledBorder: OutlineInputBorder(
+                                                              borderRadius:
+                                                                  BorderRadius.all(
+                                                                      Radius.circular(
+                                                                          30.0)),
+                                                              borderSide: BorderSide(
+                                                                  color: Colors
+                                                                      .transparent)),
+                                                          focusedBorder:
+                                                              OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.all(Radius.circular(30.0)),
+                                                                  borderSide: BorderSide(width: 1.5, color: Colors.red.shade400)))),
                                                   actions: [
-                                                    ElevatedButton(
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                              primary: Colors
-                                                                  .redAccent),
-                                                      child: Text('İptal'),
+                                                    TextButton(
+                                                      style:
+                                                          TextButton.styleFrom(
+                                                              primary:
+                                                                  Colors.red),
+                                                      child: Text('İptal',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
                                                       onPressed: () {
                                                         Navigator.of(context)
                                                             .pop(false);
