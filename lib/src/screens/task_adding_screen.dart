@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 
 class TaskAddingScreen extends StatefulWidget {
   final Function _addTask;
@@ -16,6 +19,40 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
 
   final _titleController = TextEditingController();
   final _noteController = TextEditingController();
+
+  late FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
+
+  void _initializeSettings() async {
+    _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = IOSInitializationSettings();
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+    _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  Future<void> _showNotification(DateTime dateTime, int channelId) async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'channelId', 'channelName', 'channelDescription',
+        importance: Importance.max, priority: Priority.high);
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics);
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
+      channelId,
+      'PlanyApp',
+      'Planlanmış Notun Var!',
+      tz.TZDateTime.from(dateTime, tz.local),
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      payload: 'payload',
+    );
+  }
 
   DateTime? _date;
   TimeOfDay? _time;
@@ -53,6 +90,13 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
         _time = _timePicker;
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeSettings();
+    tz.initializeTimeZones();
   }
 
   @override
@@ -421,6 +465,24 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                         _time,
                                         _hasAlarm,
                                         taskProvider);
+                                    if (_hasAlarm &&
+                                        _date != null &&
+                                        _time != null &&
+                                        (_titleController.text
+                                                .trim()
+                                                .isNotEmpty ||
+                                            _noteController.text
+                                                .trim()
+                                                .isNotEmpty)) {
+                                      DateTime dateTime = DateTime(
+                                          _date!.year,
+                                          _date!.month,
+                                          _date!.day,
+                                          _time!.hour,
+                                          _time!.minute);
+                                      int channelId = dateTime.hashCode;
+                                      _showNotification(dateTime, channelId);
+                                    }
                                   },
                                   child: Text('Oluştur'),
                                   style: ElevatedButton.styleFrom(
