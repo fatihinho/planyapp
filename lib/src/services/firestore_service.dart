@@ -29,33 +29,38 @@ class FirestoreService {
   Future<DocumentSnapshot> getTaskById(String id) async {
     return await _users
         .doc(_authService.userUID)
-        .collection('task')
+        .collection('tasks')
         .doc(id)
         .get();
   }
 
   Future<QuerySnapshot> getTasks() async {
-    return await _users.doc(_authService.userUID).collection('task').get();
+    return await _users
+        .doc(_authService.userUID)
+        .collection('tasks')
+        .orderBy('timestamp', descending: true)
+        .get();
   }
 
   Future<QuerySnapshot> getTaskFolders() async {
     return await _users
         .doc(_authService.userUID)
-        .collection('taskFolder')
+        .collection('taskFolders')
+        .orderBy('timestamp', descending: true)
         .get();
   }
 
   Future<int> getCurrentTaskCount(int folderId) async {
     var taskFolder = await _users
         .doc(_authService.userUID)
-        .collection('taskFolder')
+        .collection('taskFolders')
         .get()
         .then((value) =>
             value.docs.firstWhere((element) => element['id'] == folderId))
         .catchError((e) => throw e.toString());
     var currentTaskCount = await _users
         .doc(_authService.userUID)
-        .collection('taskFolder')
+        .collection('taskFolders')
         .doc(taskFolder.id)
         .get()
         .catchError((e) => throw e.toString());
@@ -64,6 +69,7 @@ class FirestoreService {
 
   Future<void> addTask(
       int id,
+      int timestamp,
       String? title,
       String? note,
       String? day,
@@ -73,19 +79,21 @@ class FirestoreService {
       String? minute,
       bool hasAlarm,
       bool isCompleted,
-      int folderId) async {
+      int folderId,
+      int? channelId) async {
     var taskFolder = await _users
         .doc(_authService.userUID)
-        .collection('taskFolder')
+        .collection('taskFolders')
         .get()
         .then((value) =>
             value.docs.firstWhere((element) => element['id'] == folderId));
     var currentTaskCount = await getCurrentTaskCount(folderId);
     await _users
         .doc(_authService.userUID)
-        .collection('task')
+        .collection('tasks')
         .add({
           'id': id,
+          'timestamp': timestamp,
           'title': title,
           'note': note,
           'day': day,
@@ -95,20 +103,22 @@ class FirestoreService {
           'minute': minute,
           'hasAlarm': hasAlarm,
           'isCompleted': isCompleted,
-          'folderId': folderId
+          'folderId': folderId,
+          'channelId': channelId
         })
         .then((_) => _users
             .doc(_authService.userUID)
-            .collection('taskFolder')
+            .collection('taskFolders')
             .doc(taskFolder.id)
             .update({'taskCount': ++currentTaskCount}))
         .catchError((e) => throw e.toString());
   }
 
-  Future<void> addTaskFolder(int id, String name, String iconColor,
-      bool isPrivate, String? password, int taskCount) async {
-    await _users.doc(_authService.userUID).collection('taskFolder').add({
+  Future<void> addTaskFolder(int id, int timestamp, String name,
+      String iconColor, bool isPrivate, String? password, int taskCount) async {
+    await _users.doc(_authService.userUID).collection('taskFolders').add({
       'id': id,
+      'timestamp': timestamp,
       'name': name,
       'iconColor': iconColor,
       'isPrivate': isPrivate,
@@ -126,8 +136,9 @@ class FirestoreService {
       String? year,
       String? hour,
       String? minute,
-      bool hasAlarm) async {
-    await _users.doc(_authService.userUID).collection('task').doc(id).update({
+      bool hasAlarm,
+      int? channelId) async {
+    await _users.doc(_authService.userUID).collection('tasks').doc(id).update({
       'title': title,
       'note': note,
       'day': day,
@@ -135,47 +146,49 @@ class FirestoreService {
       'year': year,
       'hour': hour,
       'minute': minute,
-      'hasAlarm': hasAlarm
+      'hasAlarm': hasAlarm,
+      'channelId': channelId
     }).catchError((e) => throw e.toString());
   }
 
   Future<void> deleteTask(String id, int folderId) async {
     var taskFolder = await _users
         .doc(_authService.userUID)
-        .collection('taskFolder')
+        .collection('taskFolders')
         .get()
         .then((value) =>
             value.docs.firstWhere((element) => element['id'] == folderId));
     var currentTaskCount = await getCurrentTaskCount(folderId);
     await _users
         .doc(_authService.userUID)
-        .collection('task')
+        .collection('tasks')
         .doc(id)
         .delete()
         .then((value) => _users
             .doc(_authService.userUID)
-            .collection('taskFolder')
+            .collection('taskFolders')
             .doc(taskFolder.id)
             .update({'taskCount': --currentTaskCount}))
         .catchError((e) => e.toString());
   }
 
   Future<void> deleteTaskFolder(String id, int folderId) async {
-    var tasks = await _users.doc(_authService.userUID).collection('task').get();
+    var tasks =
+        await _users.doc(_authService.userUID).collection('tasks').get();
     List<QueryDocumentSnapshot> tasksByFolder = tasks.docs
         .where((element) => element.get('folderId') == folderId)
         .toList();
     for (var task in tasksByFolder) {
       await _users
           .doc(_authService.userUID)
-          .collection('task')
+          .collection('tasks')
           .doc(task.id)
           .delete()
           .catchError((e) => e.toString());
     }
     await _users
         .doc(_authService.userUID)
-        .collection('taskFolder')
+        .collection('taskFolders')
         .doc(id)
         .delete()
         .catchError((e) => throw e.toString());
@@ -184,7 +197,7 @@ class FirestoreService {
   Future<bool> isTaskCompleted(String id) async {
     var task = await _users
         .doc(_authService.userUID)
-        .collection('task')
+        .collection('tasks')
         .doc(id)
         .get()
         .catchError((e) => throw e.toString());
@@ -193,12 +206,13 @@ class FirestoreService {
 
   Future<void> updateTaskCompleted(String id) async {
     var isCompleted = await isTaskCompleted(id);
-    await _users.doc(_authService.userUID).collection('task').doc(id).update(
+    await _users.doc(_authService.userUID).collection('tasks').doc(id).update(
         {'isCompleted': !isCompleted}).catchError((e) => throw e.toString());
   }
 
   Future<int> getTotalTaskCount() async {
-    var tasks = await _users.doc(_authService.userUID).collection('task').get();
+    var tasks =
+        await _users.doc(_authService.userUID).collection('tasks').get();
     return tasks.docs.length;
   }
 }

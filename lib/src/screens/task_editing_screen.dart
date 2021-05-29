@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
+import 'package:planyapp/src/services/notification_service.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 class TaskEditingScreen extends StatefulWidget {
   final String _id;
@@ -14,8 +17,10 @@ class TaskEditingScreen extends StatefulWidget {
 
 class _TaskEditingScreenState extends State<TaskEditingScreen> {
   late bool _hasAlarm;
+  late DocumentSnapshot _task;
 
   final _firestoreService = FirestoreService();
+  final _notificationService = NotificationService();
 
   final _titleController = TextEditingController();
   final _noteController = TextEditingController();
@@ -27,7 +32,8 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
     DateTime? _datePicker = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(1950),
+        firstDate: DateTime(
+            DateTime.now().year, DateTime.now().month, DateTime.now().day),
         lastDate: DateTime(2050));
 
     if (_datePicker != null && _datePicker != _date) {
@@ -61,6 +67,13 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
   void _initTask() async {
     var task = await _firestoreService.getTaskById(widget._id);
     setState(() {
+      _task = task;
+    });
+  }
+
+  void _initTaskFields() async {
+    var task = await _firestoreService.getTaskById(widget._id);
+    setState(() {
       if (task.get('title') != null) {
         _titleController.text = task.get('title');
       }
@@ -82,7 +95,10 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
   @override
   void initState() {
     super.initState();
+    _notificationService.initializeSettings();
+    tz.initializeTimeZones();
     _initTask();
+    _initTaskFields();
     _hasAlarm = widget.hasAlarm;
   }
 
@@ -446,13 +462,42 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
                                         _time = null;
                                       });
                                     }
+                                    if (_task.get('channelId') != null) {
+                                      int channelId = _task.get('channelId');
+                                      _notificationService
+                                          .cancelNotificationByChannelId(
+                                              channelId);
+                                    }
+                                    int? channelId;
+                                    if (_hasAlarm &&
+                                        _date != null &&
+                                        _time != null &&
+                                        DateTime.now().hour <= _time!.hour &&
+                                        DateTime.now().minute < _time!.minute &&
+                                        (_titleController.text
+                                                .trim()
+                                                .isNotEmpty ||
+                                            _noteController.text
+                                                .trim()
+                                                .isNotEmpty)) {
+                                      channelId = UniqueKey().hashCode;
+                                      DateTime dateTime = DateTime(
+                                          _date!.year,
+                                          _date!.month,
+                                          _date!.day,
+                                          _time!.hour,
+                                          _time!.minute);
+                                      _notificationService.showNotification(
+                                          dateTime, channelId);
+                                    }
                                     widget._editTask(
                                         widget._id,
                                         _titleController,
                                         _noteController,
                                         _date,
                                         _time,
-                                        _hasAlarm);
+                                        _hasAlarm,
+                                        channelId);
                                   },
                                   child: Text('Düzenle'),
                                   style: ElevatedButton.styleFrom(

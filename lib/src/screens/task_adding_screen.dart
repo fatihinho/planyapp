@@ -28,7 +28,8 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
     DateTime? _datePicker = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(1950),
+        firstDate: DateTime(
+            DateTime.now().year, DateTime.now().month, DateTime.now().day),
         lastDate: DateTime(2050));
 
     if (_datePicker != null && _datePicker != _date) {
@@ -425,32 +426,36 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                         _time = null;
                                       });
                                     }
-                                    widget._addTask(
-                                        _titleController,
-                                        _noteController,
-                                        _date,
-                                        _time,
-                                        _hasAlarm,
-                                        taskProvider);
+                                    int? channelId;
                                     if (_hasAlarm &&
                                         _date != null &&
                                         _time != null &&
+                                        DateTime.now().hour <= _time!.hour &&
+                                        DateTime.now().minute < _time!.minute &&
                                         (_titleController.text
                                                 .trim()
                                                 .isNotEmpty ||
                                             _noteController.text
                                                 .trim()
                                                 .isNotEmpty)) {
+                                      channelId = UniqueKey().hashCode;
                                       DateTime dateTime = DateTime(
                                           _date!.year,
                                           _date!.month,
                                           _date!.day,
                                           _time!.hour,
                                           _time!.minute);
-                                      int channelId = dateTime.hashCode;
                                       _notificationService.showNotification(
                                           dateTime, channelId);
                                     }
+                                    widget._addTask(
+                                        _titleController,
+                                        _noteController,
+                                        _date,
+                                        _time,
+                                        _hasAlarm,
+                                        taskProvider,
+                                        channelId);
                                   },
                                   child: Text('Oluştur'),
                                   style: ElevatedButton.styleFrom(

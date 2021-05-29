@@ -439,6 +439,7 @@ class _TaskFolderAddingScreenState extends State<TaskFolderAddingScreen> {
                                                 .text.isNotEmpty)) {
                                       _firestoreService.addTaskFolder(
                                         UniqueKey().hashCode,
+                                        DateTime.now().millisecondsSinceEpoch,
                                         _folderNameController.text,
                                         ColorsUtil.colorValueToName(ColorsUtil
                                             .boxColors[_selectedBoxIndex]

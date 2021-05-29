@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/task_adding_screen.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
+import 'package:planyapp/src/services/notification_service.dart';
 import 'package:planyapp/src/utils/colors_util.dart';
 import 'package:planyapp/src/widgets/task_list_widget.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 class TaskScreen extends StatefulWidget {
   final int _folderId;
@@ -22,6 +24,7 @@ class _TaskScreenState extends State<TaskScreen> {
   var _searchIcon = const Icon(Icons.search);
 
   final _firestoreService = FirestoreService();
+  final _notificationService = NotificationService();
 
   final _searchController = TextEditingController();
 
@@ -91,13 +94,13 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   void _addTask(
-    TextEditingController titleController,
-    TextEditingController noteController,
-    DateTime? date,
-    TimeOfDay? time,
-    bool hasAlarm,
-    TaskProvider taskProvider,
-  ) async {
+      TextEditingController titleController,
+      TextEditingController noteController,
+      DateTime? date,
+      TimeOfDay? time,
+      bool hasAlarm,
+      TaskProvider taskProvider,
+      int? channelId) async {
     if (hasAlarm) {
       if (date != null &&
           time != null &&
@@ -105,6 +108,7 @@ class _TaskScreenState extends State<TaskScreen> {
               noteController.text.trim().isNotEmpty)) {
         await _firestoreService.addTask(
             UniqueKey().hashCode,
+            DateTime.now().millisecondsSinceEpoch,
             titleController.text,
             noteController.text,
             date.day.toString(),
@@ -114,7 +118,8 @@ class _TaskScreenState extends State<TaskScreen> {
             time.minute.toString(),
             hasAlarm,
             false,
-            widget._folderId);
+            widget._folderId,
+            channelId);
         taskProvider.increaseTotalTaskCount();
         Navigator.of(context).pop(true);
       } else {
@@ -127,6 +132,7 @@ class _TaskScreenState extends State<TaskScreen> {
           noteController.text.trim().isNotEmpty) {
         await _firestoreService.addTask(
             UniqueKey().hashCode,
+            DateTime.now().millisecondsSinceEpoch,
             titleController.text,
             noteController.text,
             date?.day.toString(),
@@ -136,7 +142,8 @@ class _TaskScreenState extends State<TaskScreen> {
             time?.minute.toString(),
             hasAlarm,
             false,
-            widget._folderId);
+            widget._folderId,
+            channelId);
         taskProvider.increaseTotalTaskCount();
         Navigator.of(context).pop(true);
       } else {
@@ -154,7 +161,8 @@ class _TaskScreenState extends State<TaskScreen> {
       TextEditingController noteController,
       DateTime? date,
       TimeOfDay? time,
-      bool hasAlarm) async {
+      bool hasAlarm,
+      int? channelId) async {
     if (hasAlarm) {
       if (date != null &&
           time != null &&
@@ -169,7 +177,8 @@ class _TaskScreenState extends State<TaskScreen> {
             date.year.toString(),
             time.hour.toString(),
             time.minute.toString(),
-            hasAlarm);
+            hasAlarm,
+            channelId);
         Navigator.of(context).pop(true);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -188,7 +197,8 @@ class _TaskScreenState extends State<TaskScreen> {
             date?.year.toString(),
             time?.hour.toString(),
             time?.minute.toString(),
-            hasAlarm);
+            hasAlarm,
+            channelId);
         Navigator.of(context).pop(true);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -200,9 +210,10 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   void _deleteTask(List<DocumentSnapshot> tasks, int index,
-      TaskProvider taskProvider) async {
+      TaskProvider taskProvider, int channelId) async {
     await _firestoreService.deleteTask(tasks[index].id, widget._folderId);
     taskProvider.decreaseTotalTaskCount();
+    await _notificationService.cancelNotificationByChannelId(channelId);
     Navigator.of(context).pop(true);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -211,6 +222,13 @@ class _TaskScreenState extends State<TaskScreen> {
       ),
     );
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _notificationService.initializeSettings();
+    tz.initializeTimeZones();
   }
 
   @override

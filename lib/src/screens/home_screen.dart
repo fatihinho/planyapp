@@ -4,8 +4,10 @@ import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/task_screen.dart';
 import 'package:planyapp/src/screens/taskfolder_adding_screen.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
+import 'package:planyapp/src/services/notification_service.dart';
 import 'package:planyapp/src/utils/colors_util.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -16,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   var _userName = '';
 
   final _firestoreService = FirestoreService();
+  final _notificationService = NotificationService();
 
   final _nameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -84,10 +87,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _cancelNotificationsByFolder(DocumentSnapshot taskFolder) async {
+    var tasks = await _firestoreService.getTasks();
+    List<QueryDocumentSnapshot> tasksByFolder = tasks.docs
+        .where((element) => element.get('folderId') == taskFolder.get('id'))
+        .toList();
+    for (var task in tasksByFolder) {
+      await _notificationService
+          .cancelNotificationByChannelId(task.get('channelId') ?? -1);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _initUserName();
+    _notificationService.initializeSettings();
+    tz.initializeTimeZones();
   }
 
   @override
@@ -443,6 +459,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                   .id,
                                                               taskFolders[index]
                                                                   .get('id'));
+                                                      _cancelNotificationsByFolder(
+                                                          taskFolders[index]);
                                                       Navigator.of(context)
                                                           .pop(true);
                                                       ScaffoldMessenger.of(

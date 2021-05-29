@@ -34,4 +34,8 @@ class NotificationService {
           UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
+
+  Future<void> cancelNotificationByChannelId(int channelId) async {
+    await _flutterLocalNotificationsPlugin.cancel(channelId);
+  }
 }

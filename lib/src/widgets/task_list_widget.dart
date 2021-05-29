@@ -118,7 +118,10 @@ class _TaskListState extends State<TaskList> {
                         style: ElevatedButton.styleFrom(primary: Colors.red),
                         child: Text('Sil'),
                         onPressed: () => widget._deleteTask(
-                            widget._tasks, widget._index, taskProvider),
+                            widget._tasks,
+                            widget._index,
+                            taskProvider,
+                            widget._tasks[widget._index].get('channelId') ?? -1),
                       )
                     ],
                   )) ??
@@ -193,28 +196,55 @@ class _TaskListState extends State<TaskList> {
                       children: [
                         widget._tasks[widget._index].get('isCompleted')
                             ? TasksTextStyles.completedAlarmIcon
-                            : TasksTextStyles.uncompletedAlarmIcon,
-                        widget._tasks[widget._index]
-                                .get('year')
-                                .trim()
-                                .isNotEmpty
+                            : (DateTime.now().year >= int.parse(widget._tasks[widget._index].get('year')) &&
+                                    (DateTime.now().month >=
+                                            int.parse(widget._tasks[widget._index]
+                                                .get('month')) &&
+                                        (DateTime.now().day >= int.parse(widget._tasks[widget._index].get('day')) &&
+                                            (DateTime.now().hour >=
+                                                    int.parse(widget._tasks[widget._index]
+                                                        .get('hour')) &&
+                                                (DateTime.now().minute >=
+                                                    int.parse(widget
+                                                        ._tasks[widget._index]
+                                                        .get('minute'))))))
+                                ? TasksTextStyles.uncompletedPasiveAlarmIcon
+                                : TasksTextStyles.uncompletedActiveAlarmIcon),
+                        widget._tasks[widget._index].get('year').trim().isNotEmpty
                             ? Text(
                                 '${DateTimeFormat.formatDate(widget._tasks[widget._index].get('day'))}/${DateTimeFormat.formatDate(widget._tasks[widget._index].get('month'))}/${widget._tasks[widget._index].get('year')}',
                                 style: widget._tasks[widget._index]
                                         .get('isCompleted')
                                     ? TasksTextStyles.completedDateTimeStyle
-                                    : TasksTextStyles.uncompletedDateTimeStyle)
+                                    : (DateTime.now().year >= int.parse(widget._tasks[widget._index].get('year')) &&
+                                            (DateTime.now().month >=
+                                                    int.parse(widget
+                                                        ._tasks[widget._index]
+                                                        .get('month')) &&
+                                                (DateTime.now().day >= int.parse(widget._tasks[widget._index].get('day')) &&
+                                                    (DateTime.now().hour >= int.parse(widget._tasks[widget._index].get('hour')) &&
+                                                        (DateTime.now().minute >=
+                                                            int.parse(widget._tasks[widget._index].get('minute'))))))
+                                        ? TasksTextStyles.uncompletedPasiveDateTimeStyle
+                                        : TasksTextStyles.uncompletedActiveDateTimeStyle))
                             : Text(''),
-                        widget._tasks[widget._index]
-                                .get('hour')
-                                .trim()
-                                .isNotEmpty
+                        widget._tasks[widget._index].get('hour').trim().isNotEmpty
                             ? Text(
                                 '${DateTimeFormat.formatTime(widget._tasks[widget._index].get('hour'))}:${DateTimeFormat.formatTime(widget._tasks[widget._index].get('minute'))}',
                                 style: widget._tasks[widget._index]
                                         .get('isCompleted')
                                     ? TasksTextStyles.completedDateTimeStyle
-                                    : TasksTextStyles.uncompletedDateTimeStyle)
+                                    : (DateTime.now().year >= int.parse(widget._tasks[widget._index].get('year')) &&
+                                            (DateTime.now().month >=
+                                                    int.parse(widget
+                                                        ._tasks[widget._index]
+                                                        .get('month')) &&
+                                                (DateTime.now().day >= int.parse(widget._tasks[widget._index].get('day')) &&
+                                                    (DateTime.now().hour >= int.parse(widget._tasks[widget._index].get('hour')) &&
+                                                        (DateTime.now().minute >=
+                                                            int.parse(widget._tasks[widget._index].get('minute'))))))
+                                        ? TasksTextStyles.uncompletedPasiveDateTimeStyle
+                                        : TasksTextStyles.uncompletedActiveDateTimeStyle))
                             : Text(''),
                       ],
                     )

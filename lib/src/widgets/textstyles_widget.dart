@@ -21,14 +21,18 @@ class TasksTextStyles {
   static TextStyle get uncompletedNoteStyle => TextStyle(color: Colors.black);
   static TextStyle get completedNoteStyle =>
       TextStyle(color: Colors.grey, decoration: TextDecoration.lineThrough);
-  static TextStyle get uncompletedDateTimeStyle =>
+  static TextStyle get uncompletedActiveDateTimeStyle =>
       TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo.shade800);
+  static TextStyle get uncompletedPasiveDateTimeStyle =>
+      TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange.shade800);
   static TextStyle get completedDateTimeStyle => TextStyle(
       fontWeight: FontWeight.bold,
       color: Colors.grey,
       decoration: TextDecoration.lineThrough);
-  static Icon get uncompletedAlarmIcon =>
+  static Icon get uncompletedActiveAlarmIcon =>
       Icon(Icons.alarm, color: Colors.indigo.shade800, size: 20.0);
+  static Icon get uncompletedPasiveAlarmIcon =>
+      Icon(Icons.alarm, color: Colors.deepOrange.shade800, size: 20.0);
   static Icon get completedAlarmIcon =>
       Icon(Icons.alarm, color: Colors.grey, size: 20.0);
 }
