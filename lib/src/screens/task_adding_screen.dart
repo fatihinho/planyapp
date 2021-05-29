@@ -261,10 +261,14 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                       },
                                       child: Card(
                                         elevation: 5.0,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Container(
-                                            height: 50.0,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color:
+                                                      Colors.indigo.shade800)),
+                                          height: 64.0,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -287,33 +291,15 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                                   ],
                                                 ),
                                                 _date != null
-                                                    ? Row(
-                                                        children: [
-                                                          Text(
-                                                              '${DateTimeFormat.formatDate(_date?.day.toString())}/${DateTimeFormat.formatDate(_date?.month.toString())}/${_date?.year}',
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      20.0,
-                                                                  color: Colors
-                                                                      .indigo
-                                                                      .shade800,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold)),
-                                                          SizedBox(width: 2.0),
-                                                          GestureDetector(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  _date = null;
-                                                                });
-                                                              },
-                                                              child: Icon(
-                                                                  Icons.clear,
-                                                                  color: Colors
-                                                                      .red
-                                                                      .shade400))
-                                                        ],
-                                                      )
+                                                    ? Text(
+                                                        '${DateTimeFormat.formatDate(_date?.day.toString())}/${DateTimeFormat.formatDate(_date?.month.toString())}/${_date?.year}',
+                                                        style: TextStyle(
+                                                            fontSize: 18.0,
+                                                            color: Colors.indigo
+                                                                .shade800,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold))
                                                     : Text(
                                                         'Tarih Eklenmedi',
                                                         style: TextStyle(
@@ -321,7 +307,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold),
-                                                      )
+                                                      ),
                                               ],
                                             ),
                                           ),
@@ -335,10 +321,14 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                       },
                                       child: Card(
                                         elevation: 5.0,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Container(
-                                            height: 50.0,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color:
+                                                      Colors.indigo.shade800)),
+                                          height: 64.0,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -346,53 +336,30 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                               children: [
                                                 Row(
                                                   children: [
-                                                    Row(
-                                                      children: [
-                                                        Icon(Icons.alarm,
+                                                    Icon(Icons.alarm,
+                                                        color: Colors
+                                                            .indigo.shade800),
+                                                    SizedBox(width: 2.0),
+                                                    Text('Saat Ekle',
+                                                        style: TextStyle(
+                                                            fontSize: 18.0,
                                                             color: Colors.indigo
-                                                                .shade800),
-                                                        SizedBox(width: 2.0),
-                                                        Text('Saat Ekle',
-                                                            style: TextStyle(
-                                                                fontSize: 18.0,
-                                                                color: Colors
-                                                                    .indigo
-                                                                    .shade800,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold)),
-                                                      ],
-                                                    ),
+                                                                .shade800,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold)),
                                                   ],
                                                 ),
                                                 _time != null
-                                                    ? Row(
-                                                        children: [
-                                                          Text(
-                                                              '${DateTimeFormat.formatTime(_time?.hour.toString())}:${DateTimeFormat.formatTime(_time?.minute.toString())}',
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      20.0,
-                                                                  color: Colors
-                                                                      .indigo
-                                                                      .shade800,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold)),
-                                                          SizedBox(width: 2.0),
-                                                          GestureDetector(
-                                                              onTap: () {
-                                                                setState(() {
-                                                                  _time = null;
-                                                                });
-                                                              },
-                                                              child: Icon(
-                                                                  Icons.clear,
-                                                                  color: Colors
-                                                                      .red
-                                                                      .shade400))
-                                                        ],
-                                                      )
+                                                    ? Text(
+                                                        '${DateTimeFormat.formatTime(_time?.hour.toString())}:${DateTimeFormat.formatTime(_time?.minute.toString())}',
+                                                        style: TextStyle(
+                                                            fontSize: 18.0,
+                                                            color: Colors.indigo
+                                                                .shade800,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold))
                                                     : Text(
                                                         'Saat Eklenmedi',
                                                         style: TextStyle(

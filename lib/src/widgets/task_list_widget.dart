@@ -121,7 +121,8 @@ class _TaskListState extends State<TaskList> {
                             widget._tasks,
                             widget._index,
                             taskProvider,
-                            widget._tasks[widget._index].get('channelId') ?? -1),
+                            widget._tasks[widget._index].get('channelId') ??
+                                -1),
                       )
                     ],
                   )) ??
@@ -195,19 +196,22 @@ class _TaskListState extends State<TaskList> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         widget._tasks[widget._index].get('isCompleted')
-                            ? TasksTextStyles.completedAlarmIcon
-                            : (DateTime.now().year >= int.parse(widget._tasks[widget._index].get('year')) &&
-                                    (DateTime.now().month >=
-                                            int.parse(widget._tasks[widget._index]
-                                                .get('month')) &&
+                            ? (DateTime.now().year >= int.parse(widget._tasks[widget._index].get('year')) &&
+                                    (DateTime.now().month >= int.parse(widget._tasks[widget._index].get('month')) &&
                                         (DateTime.now().day >= int.parse(widget._tasks[widget._index].get('day')) &&
-                                            (DateTime.now().hour >=
-                                                    int.parse(widget._tasks[widget._index]
-                                                        .get('hour')) &&
+                                            (DateTime.now().hour >= int.parse(widget._tasks[widget._index].get('hour')) &&
                                                 (DateTime.now().minute >=
                                                     int.parse(widget
                                                         ._tasks[widget._index]
                                                         .get('minute'))))))
+                                ? TasksTextStyles.completedPasiveAlarmIcon
+                                : TasksTextStyles.completedActiveAlarmIcon)
+                            : (DateTime.now().year >= int.parse(widget._tasks[widget._index].get('year')) &&
+                                    (DateTime.now().month >= int.parse(widget._tasks[widget._index].get('month')) &&
+                                        (DateTime.now().day >= int.parse(widget._tasks[widget._index].get('day')) &&
+                                            (DateTime.now().hour >= int.parse(widget._tasks[widget._index].get('hour')) &&
+                                                (DateTime.now().minute >=
+                                                    int.parse(widget._tasks[widget._index].get('minute'))))))
                                 ? TasksTextStyles.uncompletedPasiveAlarmIcon
                                 : TasksTextStyles.uncompletedActiveAlarmIcon),
                         widget._tasks[widget._index].get('year').trim().isNotEmpty
