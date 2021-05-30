@@ -121,8 +121,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                       primary: Colors.red),
                                   child: Text('Sil'),
                                   onPressed: () {
-                                    widget._deleteTask(widget._tasks,
-                                        widget._index, taskProvider);
+                                    widget._deleteTask(
+                                        widget._tasks,
+                                        widget._index,
+                                        taskProvider,
+                                        widget._tasks[widget._index]
+                                                .get('channelId') ??
+                                            -1);
                                     Navigator.of(context).pop(true);
                                   },
                                 )
