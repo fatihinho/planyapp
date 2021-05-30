@@ -43,6 +43,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     final taskProvider = Provider.of<TaskProvider>(context);
 
     int dateComp;
@@ -171,56 +172,60 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     widget._tasks[widget._index].get('note').trim().isNotEmpty
                         ? Padding(
                             padding: const EdgeInsets.all(24.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                widget._tasks[widget._index].get('hasAlarm')
-                                    ? Column(children: [
-                                        Row(
-                                          children: [
-                                            dateComp >= 0
-                                                ? TasksTextStyles
-                                                    .uncompletedPasiveAlarmIcon
-                                                : TasksTextStyles
-                                                    .uncompletedActiveAlarmIcon,
-                                            Text(
-                                              ' ${DateTimeFormat.formatDate(widget._tasks[widget._index].get('day'))}/${DateTimeFormat.formatDate(widget._tasks[widget._index].get('month'))}/${widget._tasks[widget._index].get('year')}, ',
-                                              style: dateComp >= 0
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  widget._tasks[widget._index].get('hasAlarm')
+                                      ? Column(children: [
+                                          Row(
+                                            children: [
+                                              dateComp >= 0
                                                   ? TasksTextStyles
-                                                      .uncompletedPasiveDateTimeStyle
+                                                      .uncompletedPasiveAlarmIcon
                                                   : TasksTextStyles
-                                                      .uncompletedActiveDateTimeStyle,
-                                            ),
-                                            Text(
-                                              '${DateTimeFormat.formatTime(widget._tasks[widget._index].get('hour'))}:${DateTimeFormat.formatTime(widget._tasks[widget._index].get('minute'))}',
-                                              style: dateComp >= 0
-                                                  ? TasksTextStyles
-                                                      .uncompletedPasiveDateTimeStyle
-                                                  : TasksTextStyles
-                                                      .uncompletedActiveDateTimeStyle,
-                                            ),
-                                          ],
-                                        ),
-                                        Divider(
-                                          height: 32.0,
-                                          thickness: 1.0,
-                                          color: Colors.black,
-                                        )
-                                      ])
-                                    : Container(),
-                                Text(
-                                  '${widget._tasks[widget._index].get('note')}',
-                                  style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
+                                                      .uncompletedActiveAlarmIcon,
+                                              Text(
+                                                ' ${DateTimeFormat.formatDate(widget._tasks[widget._index].get('day'))}/${DateTimeFormat.formatDate(widget._tasks[widget._index].get('month'))}/${widget._tasks[widget._index].get('year')}, ',
+                                                style: dateComp >= 0
+                                                    ? TasksTextStyles
+                                                        .uncompletedPasiveDateTimeStyle
+                                                    : TasksTextStyles
+                                                        .uncompletedActiveDateTimeStyle,
+                                              ),
+                                              Text(
+                                                '${DateTimeFormat.formatTime(widget._tasks[widget._index].get('hour'))}:${DateTimeFormat.formatTime(widget._tasks[widget._index].get('minute'))}',
+                                                style: dateComp >= 0
+                                                    ? TasksTextStyles
+                                                        .uncompletedPasiveDateTimeStyle
+                                                    : TasksTextStyles
+                                                        .uncompletedActiveDateTimeStyle,
+                                              ),
+                                            ],
+                                          ),
+                                          Divider(
+                                            height: 32.0,
+                                            thickness: 1.0,
+                                            color: Colors.black,
+                                          )
+                                        ])
+                                      : Container(),
+                                  Text(
+                                    '${widget._tasks[widget._index].get('note')}',
+                                    style: TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
                             ),
                           )
                         : Center(
                             child: Icon(Icons.notes,
                                 size: 148, color: Colors.indigo.shade200)),
-                height: (size.height * 0.75) - 50.0,
+                height: taskProvider.bannerIsLoaded
+                    ? (size.height * 0.75) - 50.0
+                    : (size.height * 0.75),
               ),
             )
           ],

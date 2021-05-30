@@ -12,4 +12,11 @@ class TaskProvider extends ChangeNotifier {
     totalTaskCount--;
     notifyListeners();
   }
+
+  bool bannerIsLoaded = false;
+
+  void initBannerIsLoaded(bool isLoaded) {
+    bannerIsLoaded = isLoaded;
+    notifyListeners();
+  }
 }
