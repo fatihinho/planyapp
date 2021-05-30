@@ -47,11 +47,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
     int dateComp;
     DateTime dateTime = DateTime(
-        int.parse(widget._tasks[widget._index].get('year') ?? 0),
-        int.parse(widget._tasks[widget._index].get('month') ?? 0),
-        int.parse(widget._tasks[widget._index].get('day') ?? 0),
-        int.parse(widget._tasks[widget._index].get('hour') ?? 0),
-        int.parse(widget._tasks[widget._index].get('minute') ?? 0));
+        int.parse(widget._tasks[widget._index].get('year') ?? 0.toString()),
+        int.parse(widget._tasks[widget._index].get('month') ?? 0.toString()),
+        int.parse(widget._tasks[widget._index].get('day') ?? 0.toString()),
+        int.parse(widget._tasks[widget._index].get('hour') ?? 0.toString()),
+        int.parse(widget._tasks[widget._index].get('minute') ?? 0.toString()));
     dateComp = DateTime.now().compareTo(dateTime);
 
     return Scaffold(
@@ -178,14 +178,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     ? Column(children: [
                                         Row(
                                           children: [
-                                            dateComp > 0
+                                            dateComp >= 0
                                                 ? TasksTextStyles
                                                     .uncompletedPasiveAlarmIcon
                                                 : TasksTextStyles
                                                     .uncompletedActiveAlarmIcon,
                                             Text(
                                               ' ${DateTimeFormat.formatDate(widget._tasks[widget._index].get('day'))}/${DateTimeFormat.formatDate(widget._tasks[widget._index].get('month'))}/${widget._tasks[widget._index].get('year')}, ',
-                                              style: dateComp > 0
+                                              style: dateComp >= 0
                                                   ? TasksTextStyles
                                                       .uncompletedPasiveDateTimeStyle
                                                   : TasksTextStyles
@@ -193,7 +193,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                             ),
                                             Text(
                                               '${DateTimeFormat.formatTime(widget._tasks[widget._index].get('hour'))}:${DateTimeFormat.formatTime(widget._tasks[widget._index].get('minute'))}',
-                                              style: dateComp > 0
+                                              style: dateComp >= 0
                                                   ? TasksTextStyles
                                                       .uncompletedPasiveDateTimeStyle
                                                   : TasksTextStyles

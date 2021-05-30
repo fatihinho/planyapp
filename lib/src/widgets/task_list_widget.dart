@@ -140,11 +140,11 @@ class _TaskListState extends State<TaskList> {
 
     int dateComp;
     DateTime dateTime = DateTime(
-        int.parse(widget._tasks[widget._index].get('year') ?? 0),
-        int.parse(widget._tasks[widget._index].get('month') ?? 0),
-        int.parse(widget._tasks[widget._index].get('day') ?? 0),
-        int.parse(widget._tasks[widget._index].get('hour') ?? 0),
-        int.parse(widget._tasks[widget._index].get('minute') ?? 0));
+        int.parse(widget._tasks[widget._index].get('year') ?? 0.toString()),
+        int.parse(widget._tasks[widget._index].get('month') ?? 0.toString()),
+        int.parse(widget._tasks[widget._index].get('day') ?? 0.toString()),
+        int.parse(widget._tasks[widget._index].get('hour') ?? 0.toString()),
+        int.parse(widget._tasks[widget._index].get('minute') ?? 0.toString()));
     dateComp = DateTime.now().compareTo(dateTime);
 
     return Card(
@@ -205,10 +205,10 @@ class _TaskListState extends State<TaskList> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         widget._tasks[widget._index].get('isCompleted')
-                            ? dateComp > 0
+                            ? dateComp >= 0
                                 ? TasksTextStyles.completedPasiveAlarmIcon
                                 : TasksTextStyles.completedActiveAlarmIcon
-                            : dateComp > 0
+                            : dateComp >= 0
                                 ? TasksTextStyles.uncompletedPasiveAlarmIcon
                                 : TasksTextStyles.uncompletedActiveAlarmIcon,
                         widget._tasks[widget._index]
@@ -220,7 +220,7 @@ class _TaskListState extends State<TaskList> {
                                 style: widget._tasks[widget._index]
                                         .get('isCompleted')
                                     ? TasksTextStyles.completedDateTimeStyle
-                                    : dateComp > 0
+                                    : dateComp >= 0
                                         ? TasksTextStyles
                                             .uncompletedPasiveDateTimeStyle
                                         : TasksTextStyles
@@ -235,7 +235,7 @@ class _TaskListState extends State<TaskList> {
                                 style: widget._tasks[widget._index]
                                         .get('isCompleted')
                                     ? TasksTextStyles.completedDateTimeStyle
-                                    : dateComp > 0
+                                    : dateComp >= 0
                                         ? TasksTextStyles
                                             .uncompletedPasiveDateTimeStyle
                                         : TasksTextStyles
