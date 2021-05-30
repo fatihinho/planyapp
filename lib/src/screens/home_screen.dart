@@ -6,6 +6,7 @@ import 'package:planyapp/src/screens/taskfolder_adding_screen.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/services/notification_service.dart';
 import 'package:planyapp/src/utils/colors_util.dart';
+import 'package:planyapp/src/widgets/admob_banner_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -555,6 +556,7 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-        ));
+        ),
+        bottomNavigationBar: AdMobBanner());
   }
 }

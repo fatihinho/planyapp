@@ -138,6 +138,15 @@ class _TaskListState extends State<TaskList> {
   Widget build(BuildContext context) {
     final taskProvider = Provider.of<TaskProvider>(context);
 
+    int dateComp;
+    DateTime dateTime = DateTime(
+        int.parse(widget._tasks[widget._index].get('year') ?? 0),
+        int.parse(widget._tasks[widget._index].get('month') ?? 0),
+        int.parse(widget._tasks[widget._index].get('day') ?? 0),
+        int.parse(widget._tasks[widget._index].get('hour') ?? 0),
+        int.parse(widget._tasks[widget._index].get('minute') ?? 0));
+    dateComp = DateTime.now().compareTo(dateTime);
+
     return Card(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30.0))),
@@ -196,59 +205,41 @@ class _TaskListState extends State<TaskList> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         widget._tasks[widget._index].get('isCompleted')
-                            ? (DateTime.now().year >= int.parse(widget._tasks[widget._index].get('year')) &&
-                                    (DateTime.now().month >= int.parse(widget._tasks[widget._index].get('month')) &&
-                                        (DateTime.now().day >= int.parse(widget._tasks[widget._index].get('day')) &&
-                                            (DateTime.now().hour >= int.parse(widget._tasks[widget._index].get('hour')) &&
-                                                (DateTime.now().minute >=
-                                                    int.parse(widget
-                                                        ._tasks[widget._index]
-                                                        .get('minute'))))))
+                            ? dateComp > 0
                                 ? TasksTextStyles.completedPasiveAlarmIcon
-                                : TasksTextStyles.completedActiveAlarmIcon)
-                            : (DateTime.now().year >= int.parse(widget._tasks[widget._index].get('year')) &&
-                                    (DateTime.now().month >= int.parse(widget._tasks[widget._index].get('month')) &&
-                                        (DateTime.now().day >= int.parse(widget._tasks[widget._index].get('day')) &&
-                                            (DateTime.now().hour >= int.parse(widget._tasks[widget._index].get('hour')) &&
-                                                (DateTime.now().minute >=
-                                                    int.parse(widget._tasks[widget._index].get('minute'))))))
+                                : TasksTextStyles.completedActiveAlarmIcon
+                            : dateComp > 0
                                 ? TasksTextStyles.uncompletedPasiveAlarmIcon
-                                : TasksTextStyles.uncompletedActiveAlarmIcon),
-                        widget._tasks[widget._index].get('year').trim().isNotEmpty
+                                : TasksTextStyles.uncompletedActiveAlarmIcon,
+                        widget._tasks[widget._index]
+                                .get('year')
+                                .trim()
+                                .isNotEmpty
                             ? Text(
                                 '${DateTimeFormat.formatDate(widget._tasks[widget._index].get('day'))}/${DateTimeFormat.formatDate(widget._tasks[widget._index].get('month'))}/${widget._tasks[widget._index].get('year')}',
                                 style: widget._tasks[widget._index]
                                         .get('isCompleted')
                                     ? TasksTextStyles.completedDateTimeStyle
-                                    : (DateTime.now().year >= int.parse(widget._tasks[widget._index].get('year')) &&
-                                            (DateTime.now().month >=
-                                                    int.parse(widget
-                                                        ._tasks[widget._index]
-                                                        .get('month')) &&
-                                                (DateTime.now().day >= int.parse(widget._tasks[widget._index].get('day')) &&
-                                                    (DateTime.now().hour >= int.parse(widget._tasks[widget._index].get('hour')) &&
-                                                        (DateTime.now().minute >=
-                                                            int.parse(widget._tasks[widget._index].get('minute'))))))
-                                        ? TasksTextStyles.uncompletedPasiveDateTimeStyle
-                                        : TasksTextStyles.uncompletedActiveDateTimeStyle))
+                                    : dateComp > 0
+                                        ? TasksTextStyles
+                                            .uncompletedPasiveDateTimeStyle
+                                        : TasksTextStyles
+                                            .uncompletedActiveDateTimeStyle)
                             : Text(''),
-                        widget._tasks[widget._index].get('hour').trim().isNotEmpty
+                        widget._tasks[widget._index]
+                                .get('hour')
+                                .trim()
+                                .isNotEmpty
                             ? Text(
                                 '${DateTimeFormat.formatTime(widget._tasks[widget._index].get('hour'))}:${DateTimeFormat.formatTime(widget._tasks[widget._index].get('minute'))}',
                                 style: widget._tasks[widget._index]
                                         .get('isCompleted')
                                     ? TasksTextStyles.completedDateTimeStyle
-                                    : (DateTime.now().year >= int.parse(widget._tasks[widget._index].get('year')) &&
-                                            (DateTime.now().month >=
-                                                    int.parse(widget
-                                                        ._tasks[widget._index]
-                                                        .get('month')) &&
-                                                (DateTime.now().day >= int.parse(widget._tasks[widget._index].get('day')) &&
-                                                    (DateTime.now().hour >= int.parse(widget._tasks[widget._index].get('hour')) &&
-                                                        (DateTime.now().minute >=
-                                                            int.parse(widget._tasks[widget._index].get('minute'))))))
-                                        ? TasksTextStyles.uncompletedPasiveDateTimeStyle
-                                        : TasksTextStyles.uncompletedActiveDateTimeStyle))
+                                    : dateComp > 0
+                                        ? TasksTextStyles
+                                            .uncompletedPasiveDateTimeStyle
+                                        : TasksTextStyles
+                                            .uncompletedActiveDateTimeStyle)
                             : Text(''),
                       ],
                     )

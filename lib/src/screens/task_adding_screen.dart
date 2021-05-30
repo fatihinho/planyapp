@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/services/notification_service.dart';
 import 'package:planyapp/src/utils/datetime_format_util.dart';
+import 'package:planyapp/src/widgets/admob_banner_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -393,12 +394,20 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                                         _time = null;
                                       });
                                     }
+                                    int dateComp;
+                                    DateTime dateTime = DateTime(
+                                        _date != null ? _date!.year : 0,
+                                        _date != null ? _date!.month : 0,
+                                        _date != null ? _date!.day : 0,
+                                        _time != null ? _time!.hour : 0,
+                                        _time != null ? _time!.minute : 0);
+                                    dateComp =
+                                        DateTime.now().compareTo(dateTime);
                                     int? channelId;
                                     if (_hasAlarm &&
                                         _date != null &&
                                         _time != null &&
-                                        DateTime.now().hour <= _time!.hour &&
-                                        DateTime.now().minute < _time!.minute &&
+                                        dateComp < 0 &&
                                         (_titleController.text
                                                 .trim()
                                                 .isNotEmpty ||
@@ -432,10 +441,11 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                     ),
                   ),
                 ),
-                height: size.height * 0.75,
+                height: (size.height * 0.75) - 50.0,
               ),
             )
           ],
-        ));
+        ),
+        bottomNavigationBar: AdMobBanner());
   }
 }
