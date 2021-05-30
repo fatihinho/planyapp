@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/services/admob_service.dart';
-import 'package:provider/provider.dart';
 
 class AdMobBanner extends StatefulWidget {
   @override
@@ -36,9 +34,6 @@ class _AdMobBannerState extends State<AdMobBanner> {
 
   @override
   Widget build(BuildContext context) {
-    final taskProvider = Provider.of<TaskProvider>(context);
-    taskProvider.initBannerIsLoaded(_isLoaded);
-
     if (_isLoaded) {
       return Container(child: AdWidget(ad: _banner), height: 50.0);
     }
