@@ -40,6 +40,21 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     );
   }
 
+  double _getTitleFontSize() {
+    var title = widget._tasks[widget._index].get('title');
+    if (title.length <= 10) {
+      return 28.0;
+    } else if (title.length > 10 && title.length <= 20) {
+      return 24.0;
+    } else if (title.length > 20 && title.length <= 30) {
+      return 20.0;
+    } else if (title.length > 30 && title.length <= 40) {
+      return 16.0;
+    } else {
+      return 12.0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -147,9 +162,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       Expanded(
                         child: Text(
                           '${widget._tasks[widget._index].get('title')}',
-                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              fontSize: 28.0,
+                              fontSize: _getTitleFontSize(),
                               fontWeight: FontWeight.bold,
                               color: Colors.white),
                         ),

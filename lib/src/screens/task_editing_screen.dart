@@ -165,6 +165,7 @@ class _TaskEditingScreenState extends State<TaskEditingScreen> {
                           child: Column(children: [
                             TextField(
                                 controller: _titleController,
+                                maxLength: 100,
                                 cursorColor: Colors.orange,
                                 onChanged: (value) {
                                   setState(() {});

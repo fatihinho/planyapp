@@ -132,6 +132,7 @@ class _TaskAddingScreenState extends State<TaskAddingScreen> {
                           child: Column(children: [
                             TextField(
                                 controller: _titleController,
+                                maxLength: 100,
                                 onChanged: (value) {
                                   setState(() {});
                                 },
