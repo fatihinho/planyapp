@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:planyapp/src/screens/home_screen.dart';
+import 'package:planyapp/src/screens/login_screen.dart';
 import 'package:planyapp/src/screens/prologue_third_screen.dart';
 
 class PrologueFourthScreen extends StatefulWidget {
@@ -27,9 +27,9 @@ class _PrologueFourthScreenState extends State<PrologueFourthScreen> {
     );
   }
 
-  Route _navigateToHomeScreen() {
+  Route _navigateToLoginScreen() {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => HomeScreen(),
+      pageBuilder: (context, animation, secondaryAnimation) => LoginScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var begin = Offset(1.0, 0.0);
         var end = Offset.zero;
@@ -135,7 +135,7 @@ class _PrologueFourthScreenState extends State<PrologueFourthScreen> {
                     GestureDetector(
                         onTap: () {
                           Navigator.of(context)
-                              .pushReplacement(_navigateToHomeScreen());
+                              .pushReplacement(_navigateToLoginScreen());
                         },
                         child: Icon(Icons.arrow_right,
                             size: 100.0, color: Colors.black)),

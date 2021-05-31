@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:planyapp/src/providers/task_provider.dart';
 import 'package:planyapp/src/screens/home_screen.dart';
-import 'package:planyapp/src/screens/login_screen.dart';
+import 'package:planyapp/src/screens/prologue_first_screen.dart';
 import 'package:planyapp/src/services/admob_service.dart';
 import 'package:planyapp/src/services/auth_service.dart';
 import 'package:provider/provider.dart';
@@ -41,6 +41,7 @@ class App extends StatelessWidget {
         supportedLocales: [
           const Locale('tr', 'TR'),
         ],
-        home: _authService.hasCurrentUser ? HomeScreen() : LoginScreen());
+        home:
+            _authService.hasCurrentUser ? HomeScreen() : PrologueFirstScreen());
   }
 }
