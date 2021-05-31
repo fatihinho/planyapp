@@ -45,6 +45,7 @@ class _PrologueFirstScreenState extends State<PrologueFirstScreen> {
         children: [
           Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(36.0),
@@ -53,13 +54,18 @@ class _PrologueFirstScreenState extends State<PrologueFirstScreen> {
                     child: Image(image: _assetImage),
                   ),
                 ),
-                Text(
-                    'Kaydedip zamanı geldiğinde haberdar\n  olmak istediğin bir planın mı var?',
+                Text('Kaydedip zamanı geldiğinde haberdar',
                     style: TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
                         fontFamily: GoogleFonts.farsan().fontFamily,
-                        color: Colors.indigo.shade900)),
+                        color: Colors.black)),
+                Text('olmak istediğin bir planın mı var?',
+                    style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: GoogleFonts.farsan().fontFamily,
+                        color: Colors.black)),
                 SizedBox(height: 48.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -108,7 +114,8 @@ class _PrologueFirstScreenState extends State<PrologueFirstScreen> {
                           Navigator.of(context)
                               .pushReplacement(_navigateToSecondPrologue());
                         },
-                        child: Icon(Icons.arrow_right, size: 100.0)),
+                        child: Icon(Icons.arrow_right,
+                            size: 100.0, color: Colors.black)),
                   ],
                 )
               ],

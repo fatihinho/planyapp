@@ -63,6 +63,7 @@ class _PrologueFourthScreenState extends State<PrologueFourthScreen> {
         children: [
           Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(36.0),
@@ -70,13 +71,18 @@ class _PrologueFourthScreenState extends State<PrologueFourthScreen> {
                       width: size.width * 0.8,
                       child: Image(image: _assetImage)),
                 ),
-                Text(
-                    'Planlarından anında haberdar olmak\n  için de bildirimleri açmayı unutma!',
+                Text('Alarm özelliği ile zamanı gelen tüm',
                     style: TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
                         fontFamily: GoogleFonts.farsan().fontFamily,
-                        color: Colors.indigo.shade900)),
+                        color: Colors.black)),
+                Text('planlarından anında haberdar ol!',
+                    style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: GoogleFonts.farsan().fontFamily,
+                        color: Colors.black)),
                 SizedBox(height: 48.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -123,14 +129,16 @@ class _PrologueFourthScreenState extends State<PrologueFourthScreen> {
                         Navigator.of(context)
                             .pushReplacement(_navigateToThirdPrologue());
                       },
-                      child: Icon(Icons.arrow_left, size: 100.0),
+                      child: Icon(Icons.arrow_left,
+                          size: 100.0, color: Colors.black),
                     ),
                     GestureDetector(
                         onTap: () {
                           Navigator.of(context)
                               .pushReplacement(_navigateToHomeScreen());
                         },
-                        child: Icon(Icons.arrow_right, size: 100.0)),
+                        child: Icon(Icons.arrow_right,
+                            size: 100.0, color: Colors.black)),
                   ],
                 )
               ],

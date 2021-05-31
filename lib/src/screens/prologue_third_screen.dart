@@ -64,6 +64,7 @@ class _PrologueThirdScreenState extends State<PrologueThirdScreen> {
         children: [
           Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(36.0),
@@ -71,13 +72,18 @@ class _PrologueThirdScreenState extends State<PrologueThirdScreen> {
                       width: size.width * 0.8,
                       child: Image(image: _assetImage)),
                 ),
-                Text(
-                    'PlanyApp ile notlarını tut ve\n  planlarını kolayca oluştur!',
+                Text('PlanyApp ile notlarını tut ve',
                     style: TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
                         fontFamily: GoogleFonts.farsan().fontFamily,
-                        color: Colors.indigo.shade900)),
+                        color: Colors.black)),
+                Text('planlarını kolayca oluştur!',
+                    style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: GoogleFonts.farsan().fontFamily,
+                        color: Colors.black)),
                 SizedBox(height: 48.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -124,14 +130,16 @@ class _PrologueThirdScreenState extends State<PrologueThirdScreen> {
                         Navigator.of(context)
                             .pushReplacement(_navigateToSecondPrologue());
                       },
-                      child: Icon(Icons.arrow_left, size: 100.0),
+                      child: Icon(Icons.arrow_left,
+                          size: 100.0, color: Colors.black),
                     ),
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context)
                             .pushReplacement(_navigateToFourthPrologue());
                       },
-                      child: Icon(Icons.arrow_right, size: 100.0),
+                      child: Icon(Icons.arrow_right,
+                          size: 100.0, color: Colors.black),
                     ),
                   ],
                 )
