@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginScreenBackground extends StatelessWidget {
+class LoginScreenBackground extends StatefulWidget {
+  @override
+  _LoginScreenBackgroundState createState() => _LoginScreenBackgroundState();
+}
+
+class _LoginScreenBackgroundState extends State<LoginScreenBackground> {
+  late ImageProvider _assetImage;
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    _assetImage = AssetImage('assets/planyapp.png');
+    await precacheImage(_assetImage, context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -17,11 +31,8 @@ class LoginScreenBackground extends StatelessWidget {
               Column(
                 children: [
                   Container(
-                    width: size.width * 0.3,
-                    child: Image.asset(
-                      'assets/planyapp.png',
-                    ),
-                  ),
+                      width: size.width * 0.3,
+                      child: Image(image: _assetImage)),
                   SizedBox(height: 16.0),
                   Text('PlanyApp',
                       style: TextStyle(

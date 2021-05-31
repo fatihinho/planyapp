@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:planyapp/src/screens/home_screen.dart';
+import 'package:planyapp/src/screens/prologue_first_screen.dart';
 import 'package:planyapp/src/services/auth_service.dart';
 import 'package:planyapp/src/services/firestore_service.dart';
 import 'package:planyapp/src/widgets/loginscreen_input_widget.dart';
@@ -115,7 +115,7 @@ class LoginScreenWidget extends StatelessWidget {
                               Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          HomeScreen()),
+                                          PrologueFirstScreen()),
                                   (route) => false)
                             }
                         });

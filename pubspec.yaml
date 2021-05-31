@@ -39,3 +39,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/planyapp.png
+    - assets/prologue1.png
+    - assets/prologue2.png
+    - assets/prologue3.png
+    - assets/prologue4.png
